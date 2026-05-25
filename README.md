@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Al-Infaaq
 
-## Getting Started
+Bun + Turbo monorepo for anonymous sadaqah giving.
 
-First, run the development server:
+## Apps
+
+- `apps/web`: Next.js web app for spenders, foundations, Sheikh verifiers, and admins.
+- `apps/api`: Hono + tRPC API for health checks, payment orchestration, and domain workflows.
+
+## Packages
+
+- `packages/auth`: Role, session, and permission helpers.
+- `packages/db`: Database runtime configuration and Prisma schema ownership.
+- `packages/jobs`: Scheduled job entrypoints such as monthly giving reminders.
+- `packages/payments`: Paystack and Lemon Squeezy integration helpers.
+- `packages/ui`: Shared UI primitives used by app surfaces.
+- `packages/utils`: Shared formatting, role labels, URL, and money helpers.
+- `packages/tsconfig`: Shared TypeScript configuration.
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+bun install
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Copy `.env.example` to `.env.local` and fill in Paystack and Lemon Squeezy keys before testing payment routes.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Launch Checks
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+bun run db:generate
+bun run db:migrate:deploy
+bun run lint
+bun run typecheck
+bun run build
+```
 
-## Learn More
+See `brain/system/launch-readiness.md` for environment variables, webhook
+checks, privacy boundaries, and rollback notes.
 
-To learn more about Next.js, take a look at the following resources:
+## Current Product Direction
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Al-Muhsinoon can set monthly sadaqah goals and donate anonymously to verified foundations. Foundations publish requests and generate shareable QR-backed solicitation banners. Trusted Sheikh verifier accounts approve foundations before they can collect public donations.

@@ -1,0 +1,26 @@
+{
+  "name": "@al-infaaq/ui",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./badge": "./src/components/badge.tsx",
+    "./button": "./src/components/button.tsx",
+    "./card": "./src/components/card.tsx",
+    "./globals.css": "./src/globals.css"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@al-infaaq/utils": "workspace:*",
+    "class-variance-authority": "^0.7.1",
+    "react": "19.2.4",
+    "tailwindcss": "^4"
+  },
+  "devDependencies": {
+    "@al-infaaq/tsconfig": "workspace:*",
+    "@types/react": "^19"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "name": "@al-infaaq/payments",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./paystack": "./src/paystack.ts",
+    "./lemonsqueezy": "./src/lemonsqueezy.ts",
+    "./webhooks": "./src/webhooks.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@al-infaaq/tsconfig": "workspace:*",
+    "@types/node": "^20"
+  }
+}

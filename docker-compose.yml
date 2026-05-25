@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: al-infaaq-postgres
+    environment:
+      POSTGRES_DB: al_infaaq
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - al-infaaq-postgres:/var/lib/postgresql/data
+
+volumes:
+  al-infaaq-postgres:

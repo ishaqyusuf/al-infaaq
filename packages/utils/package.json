@@ -1,0 +1,25 @@
+{
+  "name": "@al-infaaq/utils",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./cn": "./src/cn.ts",
+    "./money": "./src/money.ts",
+    "./roles": "./src/roles.ts",
+    "./runtime-url": "./src/runtime-url.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.0.0"
+  },
+  "devDependencies": {
+    "@al-infaaq/tsconfig": "workspace:*",
+    "@types/node": "^20"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "name": "@al-infaaq/web",
+  "private": true,
+  "scripts": {
+    "build": "node ../../scripts/with-workspace-env.mjs next build --turbopack",
+    "dev": "node ../../scripts/with-workspace-env.mjs next dev --turbopack",
+    "lint": "biome check .",
+    "start": "node ../../scripts/with-workspace-env.mjs next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@al-infaaq/api": "workspace:*",
+    "@al-infaaq/db": "workspace:*",
+    "@al-infaaq/payments": "workspace:*",
+    "@al-infaaq/ui": "workspace:*",
+    "@al-infaaq/utils": "workspace:*",
+    "better-auth": "^1.6.11",
+    "lucide-react": "^1.16.0",
+    "next": "16.2.6",
+    "qrcode": "^1.5.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@al-infaaq/tsconfig": "workspace:*",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "postcss": "^8",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

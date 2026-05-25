@@ -1,0 +1,27 @@
+{
+  "name": "@al-infaaq/auth",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./permissions": "./src/permissions.ts",
+    "./server": "./src/server.ts",
+    "./shared": "./src/shared.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@al-infaaq/db": "workspace:*",
+    "@al-infaaq/utils": "workspace:*",
+    "@better-auth/prisma-adapter": "^1.6.11",
+    "better-auth": "^1.6.11",
+    "zod": "^4.0.0"
+  },
+  "devDependencies": {
+    "@al-infaaq/tsconfig": "workspace:*",
+    "@types/node": "^20"
+  }
+}

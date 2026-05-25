@@ -1,0 +1,224 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  SPENDER
+  FOUNDATION
+  TRUSTEE
+  ADMIN
+}
+
+enum FoundationStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum DonationRequestStatus {
+  DRAFT
+  PUBLISHED
+  FUNDED
+  ARCHIVED
+}
+
+enum DonationStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  PAYSTACK
+  LEMON_SQUEEZY
+}
+
+enum ReminderChannel {
+  EMAIL
+  SMS
+  WHATSAPP
+}
+
+model User {
+  id                  String                @id @default(cuid())
+  email               String                @unique
+  name                String?
+  emailVerified       Boolean               @default(false)
+  image               String?
+  role                UserRole              @default(SPENDER)
+  createdAt           DateTime              @default(now())
+  updatedAt           DateTime              @updatedAt
+  accounts            Account[]
+  spenderProfile      SpenderProfile?
+  foundation          Foundation?
+  sessions            Session[]
+  trusteeReviews      TrusteeReview[]        @relation("TrusteeReviewReviewer")
+  donations           Donation[]
+  auditLogs           AuditLog[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model SpenderProfile {
+  id                 String         @id @default(cuid())
+  userId             String         @unique
+  monthlyGoalKobo    Int            @default(0)
+  showSpendingHistory Boolean       @default(false)
+  reminderChannel    ReminderChannel @default(EMAIL)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  user               User           @relation(fields: [userId], references: [id])
+  goals              SpendingGoal[]
+}
+
+model Foundation {
+  id                   String                @id @default(cuid())
+  userId               String                @unique
+  name                 String
+  slug                 String                @unique
+  contactEmail         String?
+  description          String?
+  documentUrl          String?
+  registrationNumber   String?
+  status               FoundationStatus      @default(DRAFT)
+  websiteUrl           String?
+  createdAt            DateTime              @default(now())
+  updatedAt            DateTime              @updatedAt
+  user                 User                  @relation(fields: [userId], references: [id])
+  trusteeReviews       TrusteeReview[]
+  donationRequests     DonationRequest[]
+  donations            Donation[]
+}
+
+model TrusteeReview {
+  id           String             @id @default(cuid())
+  foundationId String
+  trusteeId    String?
+  status       VerificationStatus @default(PENDING)
+  notes        String?
+  createdAt    DateTime           @default(now())
+  decidedAt    DateTime?
+  foundation   Foundation         @relation(fields: [foundationId], references: [id])
+  trustee      User?              @relation("TrusteeReviewReviewer", fields: [trusteeId], references: [id])
+}
+
+model DonationRequest {
+  id             String                @id @default(cuid())
+  foundationId   String
+  title          String
+  story          String
+  targetKobo     Int
+  raisedKobo     Int                   @default(0)
+  status         DonationRequestStatus @default(DRAFT)
+  publishedAt    DateTime?
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+  foundation     Foundation            @relation(fields: [foundationId], references: [id])
+  donations      Donation[]
+  banners        FundraisingBanner[]
+}
+
+model Donation {
+  id                String          @id @default(cuid())
+  spenderId         String
+  foundationId      String
+  donationRequestId String?
+  provider          PaymentProvider
+  providerReference String          @unique
+  amountKobo        Int
+  status            DonationStatus  @default(PENDING)
+  anonymousToFoundation Boolean     @default(true)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  spender           User            @relation(fields: [spenderId], references: [id])
+  foundation        Foundation      @relation(fields: [foundationId], references: [id])
+  donationRequest   DonationRequest? @relation(fields: [donationRequestId], references: [id])
+}
+
+model SpendingGoal {
+  id               String          @id @default(cuid())
+  spenderProfileId String
+  foundationId     String?
+  monthlyAmountKobo Int
+  active           Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  spenderProfile   SpenderProfile  @relation(fields: [spenderProfileId], references: [id])
+}
+
+model Reminder {
+  id         String          @id @default(cuid())
+  userId     String
+  channel    ReminderChannel
+  scheduledAt DateTime
+  sentAt     DateTime?
+  createdAt  DateTime        @default(now())
+}
+
+model FundraisingBanner {
+  id                String          @id @default(cuid())
+  donationRequestId String
+  imageUrl          String?
+  qrCodeUrl         String
+  createdAt         DateTime        @default(now())
+  donationRequest   DonationRequest @relation(fields: [donationRequestId], references: [id])
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  action    String
+  target    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  actor     User?    @relation(fields: [actorId], references: [id])
+}

@@ -1,0 +1,21 @@
+{
+  "name": "@al-infaaq/jobs",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./tasks/monthly-reminders": "./src/tasks/monthly-reminders.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "biome check .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@al-infaaq/db": "workspace:*"
+  },
+  "devDependencies": {
+    "@al-infaaq/tsconfig": "workspace:*",
+    "@types/node": "^20"
+  }
+}
