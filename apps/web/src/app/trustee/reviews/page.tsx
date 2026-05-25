@@ -1,26 +1,13 @@
-import { prisma } from "@al-infaaq/db";
 import { Badge } from "@al-infaaq/ui/badge";
-import { Button } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import { requireRole } from "@/lib/server-auth";
-import { approveFoundationReview, rejectFoundationReview } from "./actions";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
+import { ReviewDecisionForm } from "./review-decision-form";
 
 export default async function TrusteeReviewsPage() {
   await requireRole(["trustee", "admin"]);
-
-  const reviews = await prisma.trusteeReview.findMany({
-    include: {
-      foundation: {
-        include: {
-          user: true,
-        },
-      },
-      trustee: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
+  const trpc = await createServerTrpcCaller();
+  const reviews = await trpc.trustee.reviews();
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-5 py-8 text-stone-950 sm:px-8">
@@ -93,24 +80,7 @@ export default async function TrusteeReviewsPage() {
 
               {review.status === "PENDING" ? (
                 <div className="mt-5 grid gap-3 border-t border-stone-200 pt-5">
-                  <form action={approveFoundationReview} className="grid gap-3">
-                    <input name="reviewId" type="hidden" value={review.id} />
-                    <textarea
-                      className="min-h-20 rounded-md border border-stone-300 px-3 py-3 text-sm outline-none focus:border-emerald-700"
-                      name="notes"
-                      placeholder="Decision notes"
-                    />
-                    <div className="flex flex-wrap gap-2">
-                      <Button type="submit">Approve</Button>
-                      <Button
-                        formAction={rejectFoundationReview}
-                        type="submit"
-                        variant="outline"
-                      >
-                        Reject
-                      </Button>
-                    </div>
-                  </form>
+                  <ReviewDecisionForm reviewId={review.id} />
                 </div>
               ) : (
                 <p className="mt-5 border-t border-stone-200 pt-5 text-sm text-stone-600">

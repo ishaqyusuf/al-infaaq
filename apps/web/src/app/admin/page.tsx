@@ -1,45 +1,24 @@
-import { prisma } from "@al-infaaq/db";
 import { Badge } from "@al-infaaq/ui/badge";
-import { Button } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import { requireRole } from "@/lib/server-auth";
-import { restoreFoundation, suspendFoundation } from "./actions";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
+import { FoundationStatusButton } from "./foundation-status-button";
 
 export default async function AdminPage() {
   await requireRole(["admin"]);
-
-  const [users, foundations, requests, donations, auditLogs] =
-    await Promise.all([
-      prisma.user.findMany({
-        orderBy: { createdAt: "desc" },
-        take: 8,
-      }),
-      prisma.foundation.findMany({
-        include: { user: true },
-        orderBy: { createdAt: "desc" },
-        take: 8,
-      }),
-      prisma.donationRequest.findMany({
-        include: { foundation: true },
-        orderBy: { createdAt: "desc" },
-        take: 8,
-      }),
-      prisma.donation.findMany({
-        include: { foundation: true },
-        orderBy: { createdAt: "desc" },
-        take: 8,
-      }),
-      prisma.auditLog.findMany({
-        include: { actor: true },
-        orderBy: { createdAt: "desc" },
-        take: 10,
-      }),
-    ]);
-
-  const totalSucceededKobo = donations
-    .filter((donation) => donation.status === "SUCCEEDED")
-    .reduce((total, donation) => total + donation.amountKobo, 0);
+  const trpc = await createServerTrpcCaller();
+  const {
+    auditLogs,
+    donations,
+    donationStatusCounts,
+    foundations,
+    providerTotals,
+    reconciliationItems,
+    requests,
+    totalSucceededKobo,
+    users,
+  } = await trpc.admin.dashboard();
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-5 py-8 text-stone-950 sm:px-8">
@@ -61,7 +40,95 @@ export default async function AdminPage() {
             label="Succeeded donations"
             value={formatNaira(totalSucceededKobo / 100)}
           />
+          <Metric
+            label="Pending donations"
+            value={String(donationStatusCounts.PENDING)}
+          />
+          <Metric
+            label="Failed donations"
+            value={String(donationStatusCounts.FAILED)}
+          />
+          <Metric
+            label="Refunded donations"
+            value={String(donationStatusCounts.REFUNDED)}
+          />
+          <Metric
+            label="Completed gifts"
+            value={String(donationStatusCounts.SUCCEEDED)}
+          />
         </div>
+
+        <section className="grid gap-5 xl:grid-cols-3">
+          <Card className="p-5 xl:col-span-2">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold">Reconciliation</h2>
+                <p className="mt-1 text-sm text-stone-600">
+                  Pending, failed, and refunded donations that need operational
+                  awareness.
+                </p>
+              </div>
+              <Badge className="bg-emerald-100 text-emerald-900">
+                {reconciliationItems.length} open
+              </Badge>
+            </div>
+            <div className="mt-4 grid gap-3">
+              {reconciliationItems.length === 0 ? (
+                <p className="rounded-lg border border-stone-200 p-3 text-sm text-stone-600">
+                  No payment exceptions are waiting for review.
+                </p>
+              ) : (
+                reconciliationItems.map((donation) => (
+                  <div
+                    className="rounded-lg border border-stone-200 p-3"
+                    key={donation.id}
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold">
+                          {formatNaira(donation.amountKobo / 100)}
+                        </p>
+                        <p className="text-sm text-stone-600">
+                          {donation.foundation.name}
+                        </p>
+                        {donation.donationRequest ? (
+                          <p className="mt-1 text-sm text-stone-500">
+                            {donation.donationRequest.title}
+                          </p>
+                        ) : null}
+                      </div>
+                      <Badge className={statusBadgeClass(donation.status)}>
+                        {donation.status}
+                      </Badge>
+                    </div>
+                    <p className="mt-2 break-all text-xs text-stone-500">
+                      {donation.provider}: {donation.providerReference}
+                    </p>
+                    <p className="mt-1 text-xs text-stone-500">
+                      Updated {donation.updatedAt.toLocaleString()}
+                    </p>
+                  </div>
+                ))
+              )}
+            </div>
+          </Card>
+
+          <Card className="p-5">
+            <h2 className="text-xl font-semibold">Provider Totals</h2>
+            <div className="mt-4 grid gap-3">
+              <ProviderTotal
+                count={providerTotals.PAYSTACK.count}
+                label="Paystack"
+                succeededKobo={providerTotals.PAYSTACK.succeededKobo}
+              />
+              <ProviderTotal
+                count={providerTotals.LEMON_SQUEEZY.count}
+                label="Lemon Squeezy"
+                succeededKobo={providerTotals.LEMON_SQUEEZY.succeededKobo}
+              />
+            </div>
+          </Card>
+        </section>
 
         <section className="grid gap-5 xl:grid-cols-2">
           <Card className="p-5">
@@ -79,26 +146,14 @@ export default async function AdminPage() {
                         {foundation.user.email}
                       </p>
                     </div>
-                    <Badge className="bg-stone-100 text-stone-900">
+                    <Badge className={statusBadgeClass(foundation.status)}>
                       {foundation.status}
                     </Badge>
                   </div>
-                  <form className="mt-3" action={suspendFoundation}>
-                    <input
-                      name="foundationId"
-                      type="hidden"
-                      value={foundation.id}
-                    />
-                    {foundation.status === "SUSPENDED" ? (
-                      <Button formAction={restoreFoundation} type="submit">
-                        Restore
-                      </Button>
-                    ) : (
-                      <Button type="submit" variant="outline">
-                        Suspend
-                      </Button>
-                    )}
-                  </form>
+                  <FoundationStatusButton
+                    foundationId={foundation.id}
+                    isSuspended={foundation.status === "SUSPENDED"}
+                  />
                 </div>
               ))}
             </div>
@@ -119,7 +174,7 @@ export default async function AdminPage() {
                         {request.foundation.name}
                       </p>
                     </div>
-                    <Badge className="bg-stone-100 text-stone-900">
+                    <Badge className={statusBadgeClass(request.status)}>
                       {request.status}
                     </Badge>
                   </div>
@@ -151,7 +206,7 @@ export default async function AdminPage() {
                         {donation.foundation.name}
                       </p>
                     </div>
-                    <Badge className="bg-stone-100 text-stone-900">
+                    <Badge className={statusBadgeClass(donation.status)}>
                       {donation.status}
                     </Badge>
                   </div>
@@ -196,4 +251,46 @@ function Metric({ label, value }: { label: string; value: string }) {
       <p className="mt-2 text-2xl font-semibold">{value}</p>
     </Card>
   );
+}
+
+function ProviderTotal({
+  count,
+  label,
+  succeededKobo,
+}: {
+  count: number;
+  label: string;
+  succeededKobo: number;
+}) {
+  return (
+    <div className="rounded-lg border border-stone-200 p-3">
+      <div className="flex items-center justify-between gap-3">
+        <p className="font-semibold">{label}</p>
+        <Badge className="bg-stone-100 text-stone-900">{count} gifts</Badge>
+      </div>
+      <p className="mt-2 text-2xl font-semibold">
+        {formatNaira(succeededKobo / 100)}
+      </p>
+    </div>
+  );
+}
+
+function statusBadgeClass(status: string) {
+  if (status === "APPROVED" || status === "FUNDED" || status === "SUCCEEDED") {
+    return "bg-emerald-100 text-emerald-900";
+  }
+
+  if (status === "PENDING" || status === "PENDING_REVIEW") {
+    return "bg-amber-100 text-amber-900";
+  }
+
+  if (status === "FAILED" || status === "REJECTED" || status === "SUSPENDED") {
+    return "bg-rose-100 text-rose-900";
+  }
+
+  if (status === "REFUNDED" || status === "ARCHIVED") {
+    return "bg-sky-100 text-sky-900";
+  }
+
+  return "bg-stone-100 text-stone-900";
 }

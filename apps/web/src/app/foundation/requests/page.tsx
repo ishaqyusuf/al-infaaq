@@ -1,33 +1,15 @@
-import { prisma } from "@al-infaaq/db";
 import { Badge } from "@al-infaaq/ui/badge";
-import { Button } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import Link from "next/link";
 import { requireRole } from "@/lib/server-auth";
-import { createDonationRequest, publishDonationRequest } from "./actions";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
+import { CreateRequestForm, RequestMutationButton } from "./request-forms";
 
 export default async function FoundationRequestsPage() {
-  const session = await requireRole(["foundation", "admin"]);
-  const foundation = await prisma.foundation.findFirst({
-    where:
-      session.user.role === "admin"
-        ? undefined
-        : {
-            userId: session.user.id,
-          },
-  });
-
-  const requests = foundation
-    ? await prisma.donationRequest.findMany({
-        orderBy: {
-          createdAt: "desc",
-        },
-        where: {
-          foundationId: foundation.id,
-        },
-      })
-    : [];
+  await requireRole(["foundation", "admin"]);
+  const trpc = await createServerTrpcCaller();
+  const { foundation, requests } = await trpc.requests.foundationWorkspace();
 
   const canCreate = foundation?.status === "APPROVED";
 
@@ -72,44 +54,7 @@ export default async function FoundationRequestsPage() {
           </Card>
         ) : null}
 
-        {canCreate ? (
-          <form action={createDonationRequest}>
-            <Card className="grid gap-5 p-5">
-              <h2 className="text-xl font-semibold">Create request</h2>
-              <label className="grid gap-2 text-sm font-medium text-stone-800">
-                Title
-                <input
-                  className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                  name="title"
-                  required
-                  type="text"
-                />
-              </label>
-              <label className="grid gap-2 text-sm font-medium text-stone-800">
-                Story
-                <textarea
-                  className="min-h-28 rounded-md border border-stone-300 px-3 py-3 text-base outline-none focus:border-emerald-700"
-                  name="story"
-                  required
-                />
-              </label>
-              <label className="grid gap-2 text-sm font-medium text-stone-800">
-                Target amount in NGN
-                <input
-                  className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                  min="1"
-                  name="targetNaira"
-                  required
-                  step="1"
-                  type="number"
-                />
-              </label>
-              <div className="flex justify-end">
-                <Button type="submit">Create draft</Button>
-              </div>
-            </Card>
-          </form>
-        ) : null}
+        {canCreate ? <CreateRequestForm /> : null}
 
         <div className="grid gap-4">
           {requests.map((request) => (
@@ -129,19 +74,49 @@ export default async function FoundationRequestsPage() {
                     {formatNaira(request.raisedKobo / 100)} raised of{" "}
                     {formatNaira(request.targetKobo / 100)}
                   </p>
+                  <div className="mt-4 h-2 rounded-full bg-stone-200">
+                    <div
+                      className="h-2 rounded-full bg-emerald-600"
+                      style={{ width: `${request.report.progressPercent}%` }}
+                    />
+                  </div>
+                  <dl className="mt-4 grid gap-3 text-sm sm:grid-cols-4">
+                    <RequestMetric
+                      label="Remaining"
+                      value={formatNaira(request.report.remainingKobo / 100)}
+                    />
+                    <RequestMetric
+                      label="Completed gifts"
+                      value={String(request.report.statusCounts.SUCCEEDED)}
+                    />
+                    <RequestMetric
+                      label="Pending"
+                      value={String(request.report.statusCounts.PENDING)}
+                    />
+                    <RequestMetric
+                      label="Banners"
+                      value={String(request.report.bannerCount)}
+                    />
+                  </dl>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {request.status === "DRAFT" ? (
-                    <form action={publishDonationRequest}>
-                      <input
-                        name="requestId"
-                        type="hidden"
-                        value={request.id}
-                      />
-                      <Button type="submit">Publish</Button>
-                    </form>
+                    <RequestMutationButton
+                      requestId={request.id}
+                      variant="publish"
+                    >
+                      Publish
+                    </RequestMutationButton>
                   ) : (
                     <>
+                      {request.status !== "ARCHIVED" ? (
+                        <RequestMutationButton
+                          requestId={request.id}
+                          variant="archive"
+                        >
+                          Archive
+                        </RequestMutationButton>
+                      ) : null}
                       <Link
                         className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 px-4 text-sm font-semibold"
                         href={`/foundation/requests/${request.id}/banner`}
@@ -163,5 +138,14 @@ export default async function FoundationRequestsPage() {
         </div>
       </section>
     </main>
+  );
+}
+
+function RequestMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-stone-200 p-3">
+      <dt className="text-xs font-medium text-stone-500">{label}</dt>
+      <dd className="mt-1 font-semibold text-stone-900">{value}</dd>
+    </div>
   );
 }

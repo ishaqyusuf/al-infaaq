@@ -1,23 +1,13 @@
-import { prisma } from "@al-infaaq/db";
 import { Badge } from "@al-infaaq/ui/badge";
-import { Button } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
-import { redirect } from "next/navigation";
-import { requireServerAuthSession } from "@/lib/server-auth";
-import { submitFoundationForReview } from "./actions";
+import { requireRole } from "@/lib/server-auth";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
+import { FoundationReviewForm } from "./foundation-review-form";
 
 export default async function FoundationApplyPage() {
-  const session = await requireServerAuthSession();
-
-  if (session.user.role === "trustee") {
-    redirect("/dashboard");
-  }
-
-  const foundation = await prisma.foundation.findUnique({
-    where: {
-      userId: session.user.id,
-    },
-  });
+  const session = await requireRole(["spender", "foundation"]);
+  const trpc = await createServerTrpcCaller();
+  const foundation = await trpc.foundations.current();
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-5 py-8 text-stone-950 sm:px-8">
@@ -44,70 +34,16 @@ export default async function FoundationApplyPage() {
           </div>
         </Card>
 
-        <form action={submitFoundationForReview}>
-          <Card className="grid gap-5 p-5">
-            <label className="grid gap-2 text-sm font-medium text-stone-800">
-              Foundation name
-              <input
-                className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                defaultValue={foundation?.name ?? ""}
-                name="name"
-                required
-                type="text"
-              />
-            </label>
-            <label className="grid gap-2 text-sm font-medium text-stone-800">
-              Description
-              <textarea
-                className="min-h-32 rounded-md border border-stone-300 px-3 py-3 text-base outline-none focus:border-emerald-700"
-                defaultValue={foundation?.description ?? ""}
-                name="description"
-                required
-              />
-            </label>
-            <div className="grid gap-5 md:grid-cols-2">
-              <label className="grid gap-2 text-sm font-medium text-stone-800">
-                Contact email
-                <input
-                  className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                  defaultValue={foundation?.contactEmail ?? session.user.email}
-                  name="contactEmail"
-                  type="email"
-                />
-              </label>
-              <label className="grid gap-2 text-sm font-medium text-stone-800">
-                Registration number
-                <input
-                  className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                  defaultValue={foundation?.registrationNumber ?? ""}
-                  name="registrationNumber"
-                  type="text"
-                />
-              </label>
-              <label className="grid gap-2 text-sm font-medium text-stone-800">
-                Website URL
-                <input
-                  className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                  defaultValue={foundation?.websiteUrl ?? ""}
-                  name="websiteUrl"
-                  type="url"
-                />
-              </label>
-              <label className="grid gap-2 text-sm font-medium text-stone-800">
-                Document URL
-                <input
-                  className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                  defaultValue={foundation?.documentUrl ?? ""}
-                  name="documentUrl"
-                  type="url"
-                />
-              </label>
-            </div>
-            <div className="flex justify-end">
-              <Button type="submit">Submit for Trustee review</Button>
-            </div>
-          </Card>
-        </form>
+        <FoundationReviewForm
+          defaultValues={{
+            contactEmail: foundation?.contactEmail ?? session.user.email,
+            description: foundation?.description,
+            documentUrl: foundation?.documentUrl,
+            name: foundation?.name,
+            registrationNumber: foundation?.registrationNumber,
+            websiteUrl: foundation?.websiteUrl,
+          }}
+        />
       </section>
     </main>
   );

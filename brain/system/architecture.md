@@ -13,3 +13,12 @@ Al-Infaaq follows the PlotKeys workspace pattern:
 
 App code should prefer shared packages over local duplicate helpers. Payment provider
 secrets stay server-side, and foundations never receive spender identity fields.
+
+Frontend surfaces should use a clean shadcn-standard design system: shared
+tokens, accessible primitives, consistent component variants, and restrained
+dashboard layouts. New UI should avoid one-off styling when a shared shadcn-style
+primitive or pattern can carry the interaction.
+
+Domain reads and mutations should be exposed through typed tRPC routers. Avoid
+adding new Next server actions for product workflows; migrate existing server
+actions behind tRPC procedures as phases are completed.

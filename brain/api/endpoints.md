@@ -10,10 +10,32 @@
 
 ## tRPC Routers
 
+- `admin.restoreFoundation`
+- `admin.dashboard`
+- `admin.suspendFoundation`
+- `donations.start`
+- `donations.wallet`
+- `foundations.current`
+- `foundations.submitForReview`
+- `goals.save`
+- `goals.summary`
 - `health.status`
-- `payments.initializePaystack`
-- `payments.createLemonSqueezyCheckout`
+- `requests.archive`
+- `requests.bannerPreview`
+- `requests.create`
+- `requests.foundationWorkspace`
+- `requests.generateBanner`
+- `requests.publish`
+- `requests.publicDetail`
+- `requests.publicList`
+- `trustee.approveReview`
+- `trustee.rejectReview`
+- `trustee.reviews`
 
-Next.js route handlers in `apps/web` currently expose local payment and banner
-entrypoints for the web surface while the API workspace owns the long-term backend
-shape.
+The long-term API shape is tRPC-first. Product reads and mutations should move
+through typed tRPC routers instead of Next server actions. Next.js route handlers
+are reserved for framework-required HTTP/webhook surfaces such as payment
+webhooks, auth plumbing, and binary/banner responses.
+
+Provider checkout initialization is owned by `donations.start` so every checkout
+is tied to a persisted pending donation before the user leaves Al-Infaaq.

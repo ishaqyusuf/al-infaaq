@@ -1,21 +1,21 @@
 import { prisma } from "@al-infaaq/db";
 
 export async function markDonationSucceeded(providerReference: string) {
-  const donation = await prisma.donation.findUnique({
-    where: {
-      providerReference,
-    },
-  });
-
-  if (!donation) {
-    return null;
-  }
-
-  if (donation.status === "SUCCEEDED") {
-    return donation;
-  }
-
   return await prisma.$transaction(async (tx) => {
+    const donation = await tx.donation.findUnique({
+      where: {
+        providerReference,
+      },
+    });
+
+    if (!donation) {
+      return null;
+    }
+
+    if (donation.status === "SUCCEEDED") {
+      return donation;
+    }
+
     const updatedDonation = await tx.donation.update({
       data: {
         status: "SUCCEEDED",
@@ -26,7 +26,7 @@ export async function markDonationSucceeded(providerReference: string) {
     });
 
     if (donation.donationRequestId) {
-      await tx.donationRequest.update({
+      const request = await tx.donationRequest.update({
         data: {
           raisedKobo: {
             increment: donation.amountKobo,
@@ -36,6 +36,20 @@ export async function markDonationSucceeded(providerReference: string) {
           id: donation.donationRequestId,
         },
       });
+
+      if (
+        request.status === "PUBLISHED" &&
+        request.raisedKobo >= request.targetKobo
+      ) {
+        await tx.donationRequest.update({
+          data: {
+            status: "FUNDED",
+          },
+          where: {
+            id: request.id,
+          },
+        });
+      }
     }
 
     return updatedDonation;
@@ -49,7 +63,7 @@ export async function markDonationFailed(providerReference: string) {
     },
   });
 
-  if (!donation || donation.status === "SUCCEEDED") {
+  if (!donation || donation.status !== "PENDING") {
     return donation;
   }
 
@@ -64,17 +78,17 @@ export async function markDonationFailed(providerReference: string) {
 }
 
 export async function markDonationRefunded(providerReference: string) {
-  const donation = await prisma.donation.findUnique({
-    where: {
-      providerReference,
-    },
-  });
-
-  if (!donation || donation.status === "REFUNDED") {
-    return donation;
-  }
-
   return await prisma.$transaction(async (tx) => {
+    const donation = await tx.donation.findUnique({
+      where: {
+        providerReference,
+      },
+    });
+
+    if (!donation || donation.status === "REFUNDED") {
+      return donation;
+    }
+
     const updatedDonation = await tx.donation.update({
       data: {
         status: "REFUNDED",
@@ -85,7 +99,7 @@ export async function markDonationRefunded(providerReference: string) {
     });
 
     if (donation.status === "SUCCEEDED" && donation.donationRequestId) {
-      await tx.donationRequest.update({
+      const request = await tx.donationRequest.update({
         data: {
           raisedKobo: {
             decrement: donation.amountKobo,
@@ -95,6 +109,20 @@ export async function markDonationRefunded(providerReference: string) {
           id: donation.donationRequestId,
         },
       });
+
+      if (
+        request.status === "FUNDED" &&
+        request.raisedKobo < request.targetKobo
+      ) {
+        await tx.donationRequest.update({
+          data: {
+            status: "PUBLISHED",
+          },
+          where: {
+            id: request.id,
+          },
+        });
+      }
     }
 
     return updatedDonation;

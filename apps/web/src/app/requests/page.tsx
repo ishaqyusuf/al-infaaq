@@ -1,24 +1,12 @@
-import { prisma } from "@al-infaaq/db";
 import { Badge } from "@al-infaaq/ui/badge";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import Link from "next/link";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
 
 export default async function RequestsPage() {
-  const requests = await prisma.donationRequest.findMany({
-    include: {
-      foundation: true,
-    },
-    orderBy: {
-      publishedAt: "desc",
-    },
-    where: {
-      foundation: {
-        status: "APPROVED",
-      },
-      status: "PUBLISHED",
-    },
-  });
+  const trpc = await createServerTrpcCaller();
+  const requests = await trpc.requests.publicList();
 
   return (
     <main className="min-h-screen bg-[#f7f5ef] px-5 py-8 text-stone-950 sm:px-8">
@@ -57,6 +45,9 @@ export default async function RequestsPage() {
                     <Badge className="bg-emerald-100 text-emerald-900">
                       Approved foundation
                     </Badge>
+                    {request.status === "FUNDED" ? (
+                      <Badge className="bg-stone-950 text-white">Funded</Badge>
+                    ) : null}
                   </div>
                   <p className="mt-2 text-sm text-stone-600">
                     {request.foundation.name}

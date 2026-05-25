@@ -6,7 +6,11 @@
     "./badge": "./src/components/badge.tsx",
     "./button": "./src/components/button.tsx",
     "./card": "./src/components/card.tsx",
-    "./globals.css": "./src/globals.css"
+    "./globals.css": "./src/globals.css",
+    "./input": "./src/components/input.tsx",
+    "./label": "./src/components/label.tsx",
+    "./select": "./src/components/select.tsx",
+    "./textarea": "./src/components/textarea.tsx"
   },
   "scripts": {
     "build": "tsc --noEmit",

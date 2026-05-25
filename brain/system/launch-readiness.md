@@ -19,9 +19,12 @@
 
 - `bun run db:generate`
 - `bun run db:migrate:deploy`
+- `bun run test`
 - `bun run lint`
 - `bun run typecheck`
 - `bun run build`
+
+The contributor-facing deployment runbook lives in `docs/deployment.md`.
 
 ## Privacy Checks
 

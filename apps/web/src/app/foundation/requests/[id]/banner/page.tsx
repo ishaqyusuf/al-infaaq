@@ -1,39 +1,21 @@
-import { prisma } from "@al-infaaq/db";
 import { Card } from "@al-infaaq/ui/card";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { requireRole } from "@/lib/server-auth";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
+import { BannerGenerateButton } from "./banner-generate-button";
 
 export default async function BannerPreviewPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await requireRole(["foundation", "admin"]);
+  await requireRole(["foundation", "admin"]);
   const { id } = await params;
-  const request = await prisma.donationRequest.findUnique({
-    include: {
-      banners: {
-        orderBy: {
-          createdAt: "desc",
-        },
-        take: 1,
-      },
-      foundation: true,
-    },
-    where: {
-      id,
-    },
-  });
+  const trpc = await createServerTrpcCaller();
+  const request = await trpc.requests.bannerPreview({ requestId: id });
 
   if (!request) {
-    notFound();
-  }
-
-  if (
-    session.user.role !== "admin" &&
-    request.foundation.userId !== session.user.id
-  ) {
     notFound();
   }
 
@@ -48,15 +30,10 @@ export default async function BannerPreviewPage({
           </p>
           <h1 className="mt-2 text-3xl font-semibold">{request.title}</h1>
           <p className="mt-3 text-sm leading-6 text-stone-600">
-            Generate a QR-backed banner from the API route, then preview the
-            latest generated asset here.
+            Generate a QR-backed banner, preview the latest generated asset, and
+            use the download link for sharing.
           </p>
-          <a
-            className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-stone-950 px-4 text-sm font-semibold text-white"
-            href={`/api/requests/${request.id}/banner`}
-          >
-            Generate banner
-          </a>
+          <BannerGenerateButton requestId={request.id} />
         </Card>
 
         {latestBanner?.imageUrl ? (
@@ -69,6 +46,21 @@ export default async function BannerPreviewPage({
               unoptimized
               width={1200}
             />
+            <div className="mt-4 flex flex-wrap gap-3">
+              <a
+                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 px-4 text-sm font-semibold"
+                download={`alinfaaq-${request.id}-banner.svg`}
+                href={`/api/requests/${request.id}/banner`}
+              >
+                Download banner
+              </a>
+              <a
+                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 px-4 text-sm font-semibold"
+                href={`/requests/${request.id}`}
+              >
+                Open request
+              </a>
+            </div>
           </Card>
         ) : (
           <Card className="p-5">

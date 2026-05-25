@@ -6,6 +6,7 @@
     "dev": "node ../../scripts/with-workspace-env.mjs next dev --turbopack",
     "lint": "biome check .",
     "start": "node ../../scripts/with-workspace-env.mjs next start",
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -14,12 +15,14 @@
     "@al-infaaq/payments": "workspace:*",
     "@al-infaaq/ui": "workspace:*",
     "@al-infaaq/utils": "workspace:*",
+    "@trpc/client": "^11.0.0",
     "better-auth": "^1.6.11",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "qrcode": "^1.5.4",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "superjson": "^2.2.2"
   },
   "devDependencies": {
     "@al-infaaq/tsconfig": "workspace:*",

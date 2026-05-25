@@ -1,31 +1,14 @@
-import { prisma } from "@al-infaaq/db";
-import { Button } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import Link from "next/link";
 import { requireRole } from "@/lib/server-auth";
-import { saveGivingGoal } from "./actions";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
+import { GivingGoalForm } from "./giving-goal-form";
 
 export default async function GoalsPage() {
-  const session = await requireRole(["spender", "admin"]);
-  const profile = await prisma.spenderProfile.findUnique({
-    where: {
-      userId: session.user.id,
-    },
-  });
-  const successfulDonations = await prisma.donation.aggregate({
-    _sum: {
-      amountKobo: true,
-    },
-    where: {
-      createdAt: {
-        gte: new Date(new Date().getFullYear(), new Date().getMonth(), 1),
-      },
-      spenderId: session.user.id,
-      status: "SUCCEEDED",
-    },
-  });
-  const donatedKobo = successfulDonations._sum.amountKobo ?? 0;
+  await requireRole(["spender", "admin"]);
+  const trpc = await createServerTrpcCaller();
+  const { donatedKobo, nextReminder, profile } = await trpc.goals.summary();
   const goalKobo = profile?.monthlyGoalKobo ?? 0;
   const progress =
     goalKobo > 0 ? Math.min(100, (donatedKobo / goalKobo) * 100) : 0;
@@ -41,40 +24,13 @@ export default async function GoalsPage() {
             to you and platform systems needed for receipts and reconciliation.
           </p>
 
-          <form action={saveGivingGoal} className="mt-6 grid gap-5">
-            <label className="grid gap-2 text-sm font-medium text-stone-800">
-              Monthly goal in NGN
-              <input
-                className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                defaultValue={goalKobo ? goalKobo / 100 : ""}
-                min="0"
-                name="monthlyGoalNaira"
-                step="1"
-                type="number"
-              />
-            </label>
-            <label className="grid gap-2 text-sm font-medium text-stone-800">
-              Reminder channel
-              <select
-                className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
-                defaultValue={profile?.reminderChannel ?? "EMAIL"}
-                name="reminderChannel"
-              >
-                <option value="EMAIL">Email</option>
-                <option value="SMS">SMS</option>
-                <option value="WHATSAPP">WhatsApp</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-3 text-sm font-medium text-stone-800">
-              <input
-                defaultChecked={profile?.showSpendingHistory ?? false}
-                name="showSpendingHistory"
-                type="checkbox"
-              />
-              Show private giving history in wallet
-            </label>
-            <Button type="submit">Save goal</Button>
-          </form>
+          <GivingGoalForm
+            defaultValues={{
+              monthlyGoalNaira: goalKobo ? goalKobo / 100 : "",
+              reminderChannel: profile?.reminderChannel ?? "EMAIL",
+              showSpendingHistory: profile?.showSpendingHistory ?? false,
+            }}
+          />
         </Card>
 
         <Card className="p-5">
@@ -84,6 +40,12 @@ export default async function GoalsPage() {
           </p>
           <p className="mt-2 text-sm text-stone-600">
             of {formatNaira(goalKobo / 100)}
+          </p>
+          <p className="mt-3 text-sm text-stone-600">
+            Next reminder:{" "}
+            {nextReminder
+              ? nextReminder.scheduledAt.toLocaleString()
+              : "Paused"}
           </p>
           <div className="mt-5 h-2 rounded-full bg-stone-200">
             <div

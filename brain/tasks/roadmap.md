@@ -14,6 +14,28 @@ This is the execution roadmap for taking Al-Infaaq from the current scaffold to
 - Add Prisma 7 config and local database script wiring.
 - Install Better Auth and add API-mounted auth handler.
 - Add Better Auth Prisma schema fields and migration.
+- Add tRPC permission middleware and product mutation routers for foundations,
+  Trustee reviews, donation requests, goals, admin foundation status, and
+  donation checkout starts.
+- Remove Next server action usage from current web product workflows.
+- Move server-rendered web page domain reads to tRPC caller procedures, leaving
+  direct Prisma access only in API/auth/jobs and route-handler exceptions.
+- Add Bun test coverage for the role permission matrix, payment webhook
+  signatures, tRPC router contracts, and web architecture guardrails.
+- Remove raw provider checkout route/procedure entrypoints so `donations.start`
+  is the single checkout path tied to persisted pending donations.
+- Add admin payment reconciliation reporting for donation statuses, provider
+  totals, and pending/failed/refunded review items.
+- Add idempotent monthly reminder queueing plus email reminder processing tests
+  with provider injection and sent-row marking.
+- Move QR-backed banner generation into a protected tRPC mutation, store
+  generated `FundraisingBanner` records, and keep the web route as a generated
+  asset download response.
+- Add foundation request performance reporting with aggregate progress, status
+  counts, remaining amount, and banner count while keeping spender identity out
+  of foundation views.
+- Add a deployment runbook covering environment variables, preflight commands,
+  webhook setup, privacy checks, and rollback.
 
 ## Phase 1: Better Auth and Access Control
 
@@ -21,6 +43,8 @@ This is the execution roadmap for taking Al-Infaaq from the current scaffold to
 - Add role-aware sign-in/onboarding for spenders, foundations, Trustees,
   and admins.
 - Enforce permissions in API procedures and protected web routes.
+- Move product mutations and protected reads behind typed tRPC procedures instead
+  of Next server actions.
 - Add profile-completion redirects for new users.
 - Record audit logs for privileged actions.
 
@@ -29,6 +53,7 @@ Acceptance:
 - Every role can access its own dashboard and is blocked from other roles'
   private workflows.
 - Permission checks cover both API and UI entrypoints.
+- No new product workflow should be implemented with Next server actions.
 
 ## Phase 2: Foundation Onboarding and Trustee Review
 

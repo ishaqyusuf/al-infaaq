@@ -1,28 +1,13 @@
-import { prisma } from "@al-infaaq/db";
 import { Badge } from "@al-infaaq/ui/badge";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import { requireRole } from "@/lib/server-auth";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
 
 export default async function WalletPage() {
-  const session = await requireRole(["spender", "admin"]);
-  const profile = await prisma.spenderProfile.findUnique({
-    where: {
-      userId: session.user.id,
-    },
-  });
-  const donations = await prisma.donation.findMany({
-    include: {
-      donationRequest: true,
-      foundation: true,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    where: {
-      spenderId: session.user.id,
-    },
-  });
+  await requireRole(["spender", "admin"]);
+  const trpc = await createServerTrpcCaller();
+  const { donations, profile } = await trpc.donations.wallet();
 
   const totalSucceeded = donations
     .filter((donation) => donation.status === "SUCCEEDED")

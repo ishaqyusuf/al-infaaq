@@ -1,10 +1,10 @@
-import { prisma } from "@al-infaaq/db";
 import { Badge } from "@al-infaaq/ui/badge";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import { ArrowRight, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
 
 export default async function RequestPage({
   params,
@@ -12,18 +12,8 @@ export default async function RequestPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const request = await prisma.donationRequest.findFirst({
-    include: {
-      foundation: true,
-    },
-    where: {
-      foundation: {
-        status: "APPROVED",
-      },
-      id,
-      status: "PUBLISHED",
-    },
-  });
+  const trpc = await createServerTrpcCaller();
+  const request = await trpc.requests.publicDetail({ requestId: id });
 
   if (!request) {
     notFound();
@@ -45,6 +35,9 @@ export default async function RequestPage({
             <Badge className="bg-stone-100 text-stone-900">
               Anonymous giving
             </Badge>
+            {request.status === "FUNDED" ? (
+              <Badge className="bg-stone-950 text-white">Funded</Badge>
+            ) : null}
           </div>
           <h1 className="mt-5 text-4xl font-semibold">{request.title}</h1>
           <p className="mt-3 text-sm font-medium text-stone-600">
@@ -77,13 +70,19 @@ export default async function RequestPage({
               style={{ width: `${progress}%` }}
             />
           </div>
-          <Link
-            className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-semibold text-white"
-            href={`/donate?requestId=${request.id}`}
-          >
-            Donate anonymously
-            <ArrowRight aria-hidden="true" className="size-4" />
-          </Link>
+          {request.status === "PUBLISHED" ? (
+            <Link
+              className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-semibold text-white"
+              href={`/donate?requestId=${request.id}`}
+            >
+              Donate anonymously
+              <ArrowRight aria-hidden="true" className="size-4" />
+            </Link>
+          ) : (
+            <p className="mt-6 rounded-md bg-emerald-100 px-4 py-3 text-sm font-semibold text-emerald-900">
+              This request has reached its funding goal.
+            </p>
+          )}
           <p className="mt-4 text-xs leading-5 text-stone-500">
             Foundations see aggregate totals, not spender names, emails, or
             account identifiers.
