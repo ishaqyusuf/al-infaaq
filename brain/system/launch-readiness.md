@@ -7,6 +7,8 @@
 - `BETTER_AUTH_URL` or `API_ORIGIN`: public API/auth origin.
 - `WEB_APP_URL` and `NEXT_PUBLIC_APP_URL`: public web origin.
 - `NEXT_PUBLIC_API_URL`: browser-facing API origin.
+- Production public origins should use the `alinfaaq` domain direction.
+  TODO: confirm the final TLD before deployment.
 - `PAYSTACK_SECRET_KEY`, `PAYSTACK_PUBLIC_KEY`, and `PAYSTACK_WEBHOOK_SECRET`
   when Paystack collections are enabled.
 - `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_STORE_ID`,

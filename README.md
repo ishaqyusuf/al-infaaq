@@ -1,10 +1,14 @@
 # Al-Infaaq
 
+![Al-Infaaq GitHub README hero](apps/web/public/github-readme-hero.png)
+
 Bun + Turbo monorepo for anonymous sadaqah giving.
+
+Domain direction: `alinfaaq` for the public web presence.
 
 ## Apps
 
-- `apps/web`: Next.js web app for spenders, foundations, Sheikh verifiers, and admins.
+- `apps/web`: Next.js web app for spenders, foundations, Trustees, and admins.
 - `apps/api`: Hono + tRPC API for health checks, payment orchestration, and domain workflows.
 
 ## Packages
@@ -41,4 +45,4 @@ checks, privacy boundaries, and rollback notes.
 
 ## Current Product Direction
 
-Al-Muhsinoon can set monthly sadaqah goals and donate anonymously to verified foundations. Foundations publish requests and generate shareable QR-backed solicitation banners. Trusted Sheikh verifier accounts approve foundations before they can collect public donations.
+Al-Muhsinoon can set monthly sadaqah goals and donate anonymously to verified foundations. Foundations publish requests and generate shareable QR-backed solicitation banners. Trusted Trustee accounts approve foundations before they can collect public donations.
