@@ -1,5 +1,4 @@
--- Rename foundation review status to match Trustee language.
-ALTER TYPE "FoundationStatus" RENAME VALUE 'PENDING_VERIFICATION' TO 'PENDING_REVIEW';
+-- The initial migration now creates PENDING_REVIEW directly.
 
 -- Store the minimum profile metadata needed for Trustee review.
 ALTER TABLE "Foundation"

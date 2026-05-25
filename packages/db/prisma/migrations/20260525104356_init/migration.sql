@@ -1,8 +1,8 @@
 -- CreateEnum
-CREATE TYPE "UserRole" AS ENUM ('SPENDER', 'FOUNDATION', 'SHEIKH_VERIFIER', 'ADMIN');
+CREATE TYPE "UserRole" AS ENUM ('SPENDER', 'FOUNDATION', 'TRUSTEE', 'ADMIN');
 
 -- CreateEnum
-CREATE TYPE "FoundationStatus" AS ENUM ('DRAFT', 'PENDING_VERIFICATION', 'APPROVED', 'REJECTED', 'SUSPENDED');
+CREATE TYPE "FoundationStatus" AS ENUM ('DRAFT', 'PENDING_REVIEW', 'APPROVED', 'REJECTED', 'SUSPENDED');
 
 -- CreateEnum
 CREATE TYPE "VerificationStatus" AS ENUM ('PENDING', 'APPROVED', 'REJECTED');
@@ -59,16 +59,16 @@ CREATE TABLE "Foundation" (
 );
 
 -- CreateTable
-CREATE TABLE "VerificationRequest" (
+CREATE TABLE "TrusteeReview" (
     "id" TEXT NOT NULL,
     "foundationId" TEXT NOT NULL,
-    "sheikhId" TEXT NOT NULL,
+    "trusteeId" TEXT NOT NULL,
     "status" "VerificationStatus" NOT NULL DEFAULT 'PENDING',
     "notes" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "decidedAt" TIMESTAMP(3),
 
-    CONSTRAINT "VerificationRequest_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "TrusteeReview_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -173,10 +173,10 @@ ALTER TABLE "SpenderProfile" ADD CONSTRAINT "SpenderProfile_userId_fkey" FOREIGN
 ALTER TABLE "Foundation" ADD CONSTRAINT "Foundation_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "VerificationRequest" ADD CONSTRAINT "VerificationRequest_foundationId_fkey" FOREIGN KEY ("foundationId") REFERENCES "Foundation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TrusteeReview" ADD CONSTRAINT "TrusteeReview_foundationId_fkey" FOREIGN KEY ("foundationId") REFERENCES "Foundation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "VerificationRequest" ADD CONSTRAINT "VerificationRequest_sheikhId_fkey" FOREIGN KEY ("sheikhId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "TrusteeReview" ADD CONSTRAINT "TrusteeReview_trusteeId_fkey" FOREIGN KEY ("trusteeId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "DonationRequest" ADD CONSTRAINT "DonationRequest_foundationId_fkey" FOREIGN KEY ("foundationId") REFERENCES "Foundation"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

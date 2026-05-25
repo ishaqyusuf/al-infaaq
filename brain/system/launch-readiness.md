@@ -4,6 +4,8 @@
 
 - `DATABASE_URL`: PostgreSQL connection string.
 - `BETTER_AUTH_SECRET`: long random secret for Better Auth.
+- `AL_INFAAQ_ADMIN_EMAILS` and `AL_INFAAQ_TRUSTEE_EMAILS`: comma-separated
+  existing Better Auth users to promote during launch provisioning.
 - `BETTER_AUTH_URL` or `API_ORIGIN`: public API/auth origin.
 - `WEB_APP_URL` and `NEXT_PUBLIC_APP_URL`: public web origin.
 - `NEXT_PUBLIC_API_URL`: browser-facing API origin.
@@ -23,10 +25,15 @@
 - `bun run lint`
 - `bun run typecheck`
 - `bun run build`
+- `bun run roles:provision` after the initial admin and Trustee users have
+  signed up.
 
 The contributor-facing deployment runbook lives in `docs/deployment.md`.
 DB-backed App Router pages must use dynamic rendering so deployment builds do
 not query production data before migrations have run.
+Tracked migration SQL uses Trustee language from the initial migration. Fresh
+production databases can apply it directly; older local development databases
+that applied pre-normalized migrations should be reset locally.
 
 ## Privacy Checks
 

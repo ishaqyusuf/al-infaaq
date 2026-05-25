@@ -25,6 +25,8 @@ Auth:
 
 - `BETTER_AUTH_SECRET`
 - `BETTER_AUTH_URL` when the hosting environment requires an explicit auth URL.
+- `AL_INFAAQ_ADMIN_EMAILS`
+- `AL_INFAAQ_TRUSTEE_EMAILS`
 
 Database:
 
@@ -59,6 +61,12 @@ Run `db:migrate:deploy` before routing traffic to the new build. DB-backed App
 Router pages are marked dynamic so `next build` does not prerender live donation
 request data, but runtime requests still require the Prisma tables to exist.
 
+The migration SQL was normalized before production launch to use Trustee
+language from the first migration. Fresh deployment databases can apply the
+tracked migrations directly. If an older local development database already
+applied the pre-normalized migration files, reset that local database instead of
+treating its checksum drift as a production issue.
+
 ## Webhook Setup
 
 Configure provider dashboards with production webhook URLs:
@@ -68,6 +76,18 @@ Configure provider dashboards with production webhook URLs:
 
 Provider checkout initialization must continue through `donations.start`; do not
 add raw provider initialization routes that bypass pending donation persistence.
+
+## Role Provisioning
+
+Initial admins and Trustees should sign up through Better Auth first. Then set
+comma-separated provisioning variables and run:
+
+```bash
+bun run roles:provision
+```
+
+The script promotes existing users only, fails on unknown emails, and writes
+`user.role_provisioned` audit log rows for the role changes.
 
 ## Privacy Checks
 

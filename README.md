@@ -105,7 +105,7 @@ Copy `.env.example` to `.env.local` for local development.
 | Group | Variables |
 | --- | --- |
 | App origins | `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_API_URL`, `WEB_APP_URL`, `API_ORIGIN`, `API_PORT` |
-| Auth | `BETTER_AUTH_SECRET` |
+| Auth | `BETTER_AUTH_SECRET`, `AL_INFAAQ_ADMIN_EMAILS`, `AL_INFAAQ_TRUSTEE_EMAILS` |
 | Database | `DATABASE_PROVIDER`, `DATABASE_URL` |
 | Paystack | `PAYSTACK_PUBLIC_KEY`, `PAYSTACK_SECRET_KEY`, `PAYSTACK_WEBHOOK_SECRET` |
 | Lemon Squeezy | `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_DONATION_VARIANT_ID`, `LEMONSQUEEZY_STORE_ID`, `LEMONSQUEEZY_WEBHOOK_SECRET` |
@@ -124,6 +124,7 @@ must use real provider secrets before payment testing.
 | `bun run lint` | Lint all workspaces. |
 | `bun run test` | Run Bun tests across workspaces through Turbo. |
 | `bun run build` | Build all workspaces. |
+| `bun run roles:provision` | Promote existing Better Auth users to admin or Trustee from environment email lists. |
 | `bun run db:up` | Start the local Docker Postgres service. |
 | `bun run db:down` | Stop the local Docker Postgres service. |
 | `bun run db:logs` | Tail local Postgres logs. |

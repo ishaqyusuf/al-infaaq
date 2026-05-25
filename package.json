@@ -20,6 +20,7 @@
     "dev:web": "turbo dev --filter=@al-infaaq/web",
     "format": "biome format --write .",
     "lint": "turbo lint",
+    "roles:provision": "node ./scripts/with-workspace-env.mjs bun run scripts/provision-roles.ts",
     "test": "turbo test",
     "typecheck": "turbo typecheck"
   },
