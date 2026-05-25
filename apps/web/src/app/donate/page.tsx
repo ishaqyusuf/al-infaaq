@@ -5,6 +5,8 @@ import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { DonationForm } from "./donation-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function DonatePage({
   searchParams,
 }: {

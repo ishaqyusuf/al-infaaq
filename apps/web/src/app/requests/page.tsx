@@ -4,6 +4,8 @@ import { formatNaira } from "@al-infaaq/utils";
 import Link from "next/link";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 
+export const dynamic = "force-dynamic";
+
 export default async function RequestsPage() {
   const trpc = await createServerTrpcCaller();
   const requests = await trpc.requests.publicList();

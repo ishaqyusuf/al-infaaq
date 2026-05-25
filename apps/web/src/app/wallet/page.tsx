@@ -4,6 +4,8 @@ import { formatNaira } from "@al-infaaq/utils";
 import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 
+export const dynamic = "force-dynamic";
+
 export default async function WalletPage() {
   await requireRole(["spender", "admin"]);
   const trpc = await createServerTrpcCaller();

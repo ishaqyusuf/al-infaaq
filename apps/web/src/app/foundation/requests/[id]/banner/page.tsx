@@ -5,6 +5,8 @@ import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { BannerGenerateButton } from "./banner-generate-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function BannerPreviewPage({
   params,
 }: {

@@ -6,6 +6,8 @@ import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { CreateRequestForm, RequestMutationButton } from "./request-forms";
 
+export const dynamic = "force-dynamic";
+
 export default async function FoundationRequestsPage() {
   await requireRole(["foundation", "admin"]);
   const trpc = await createServerTrpcCaller();

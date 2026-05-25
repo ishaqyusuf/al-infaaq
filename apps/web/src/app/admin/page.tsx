@@ -5,6 +5,8 @@ import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { FoundationStatusButton } from "./foundation-status-button";
 
+export const dynamic = "force-dynamic";
+
 export default async function AdminPage() {
   await requireRole(["admin"]);
   const trpc = await createServerTrpcCaller();

@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { ReviewDecisionForm } from "./review-decision-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function TrusteeReviewsPage() {
   await requireRole(["trustee", "admin"]);
   const trpc = await createServerTrpcCaller();

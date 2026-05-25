@@ -5,6 +5,8 @@ import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { GivingGoalForm } from "./giving-goal-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function GoalsPage() {
   await requireRole(["spender", "admin"]);
   const trpc = await createServerTrpcCaller();

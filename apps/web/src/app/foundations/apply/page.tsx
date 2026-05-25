@@ -4,6 +4,8 @@ import { requireRole } from "@/lib/server-auth";
 import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { FoundationReviewForm } from "./foundation-review-form";
 
+export const dynamic = "force-dynamic";
+
 export default async function FoundationApplyPage() {
   const session = await requireRole(["spender", "foundation"]);
   const trpc = await createServerTrpcCaller();

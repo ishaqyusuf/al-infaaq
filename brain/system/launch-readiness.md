@@ -25,6 +25,8 @@
 - `bun run build`
 
 The contributor-facing deployment runbook lives in `docs/deployment.md`.
+DB-backed App Router pages must use dynamic rendering so deployment builds do
+not query production data before migrations have run.
 
 ## Privacy Checks
 

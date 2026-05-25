@@ -55,6 +55,10 @@ bun run typecheck
 bun run build
 ```
 
+Run `db:migrate:deploy` before routing traffic to the new build. DB-backed App
+Router pages are marked dynamic so `next build` does not prerender live donation
+request data, but runtime requests still require the Prisma tables to exist.
+
 ## Webhook Setup
 
 Configure provider dashboards with production webhook URLs:

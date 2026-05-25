@@ -47,6 +47,17 @@ describe("web architecture guardrails", () => {
     expect(offenders.map((path) => relative(appRoot, path))).toEqual([]);
   });
 
+  test("database-backed pages opt out of static prerendering", () => {
+    const pageFiles = appFiles.filter((path) => path.endsWith("page.tsx"));
+    const offenders = pageFiles
+      .filter((path) => readSource(path).includes("createServerTrpcCaller"))
+      .filter(
+        (path) => !readSource(path).includes('dynamic = "force-dynamic"'),
+      );
+
+    expect(offenders.map((path) => relative(appRoot, path))).toEqual([]);
+  });
+
   test("framework route handlers remain the only web Prisma exceptions", () => {
     const prismaImports = appFiles
       .filter((path) => readSource(path).includes("@al-infaaq/db"))
