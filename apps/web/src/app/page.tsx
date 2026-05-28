@@ -1,6 +1,6 @@
 import { Badge } from "@al-infaaq/ui/badge";
 import { Button } from "@al-infaaq/ui/button";
-import { Card } from "@al-infaaq/ui/card";
+import { Card, PremiumCard } from "@al-infaaq/ui/card";
 import {
   ArrowRight,
   BadgeCheck,
@@ -108,150 +108,163 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-5 px-5 py-6 sm:px-8 lg:grid-cols-[1.2fr_0.8fr]">
-        <Card className="p-5">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+      <section className="mx-auto grid max-w-7xl gap-6 px-5 py-6 sm:px-8 lg:grid-cols-[1.3fr_0.7fr]">
+        <PremiumCard className="p-6">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-md bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-900">
-                <ShieldCheck aria-hidden="true" className="size-4" />
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1 text-xs font-semibold text-emerald-950 dark:text-emerald-300 border border-emerald-250/20">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                </span>
+                <ShieldCheck aria-hidden="true" className="size-3.5 text-emerald-700 dark:text-emerald-500" />
                 Kitaab and Sunnah aligned giving
               </div>
-              <h1 className="text-3xl font-semibold leading-tight tracking-normal sm:text-5xl">
+              <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl dark:text-stone-50">
                 Spend quietly. Verify carefully. Move sadaqah faster.
               </h1>
-              <p className="mt-4 max-w-xl text-base leading-7 text-stone-600">
+              <p className="mt-4 max-w-xl text-base leading-7 text-stone-600 dark:text-stone-400">
                 Al-Muhsinoon set private monthly goals, verified foundations
                 publish real needs, and trusted Trustee accounts approve
                 foundations before they receive public donations.
               </p>
             </div>
-            <div className="grid min-w-64 gap-3 rounded-lg border border-stone-200 bg-stone-50 p-4">
+            <div className="grid min-w-64 gap-3 rounded-xl border border-stone-200/50 bg-[#fbfaf7] dark:border-stone-850 dark:bg-stone-900/40 p-5">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-stone-600">Monthly goal</span>
-                <Goal aria-hidden="true" className="size-5 text-emerald-700" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">Monthly goal</span>
+                <Goal aria-hidden="true" className="size-5 text-emerald-700 dark:text-emerald-500" />
               </div>
-              <p className="text-3xl font-semibold">NGN 75,000</p>
-              <div className="h-2 rounded-full bg-stone-200">
-                <div className="h-2 w-[68%] rounded-full bg-emerald-600" />
+              <p className="text-3xl font-bold tracking-tight">NGN 75,000</p>
+              <div className="h-1.5 rounded-full bg-stone-200/80 dark:bg-stone-800">
+                <div className="h-1.5 w-[68%] rounded-full bg-emerald-600" />
               </div>
-              <p className="text-sm text-stone-600">
+              <p className="text-xs font-medium text-stone-550 dark:text-stone-450">
                 NGN 51,000 recorded this month
               </p>
             </div>
           </div>
-        </Card>
+        </PremiumCard>
 
-        <Card className="bg-stone-950 p-5 text-white">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-stone-300">Privacy mode</p>
-              <h2 className="mt-1 text-2xl font-semibold">History hidden</h2>
+        <PremiumCard className="bg-stone-950 dark:bg-stone-900/50 p-6 text-white overflow-hidden flex flex-col justify-between">
+          <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent pointer-events-none" />
+          <div>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Privacy mode</p>
+                <h2 className="mt-1 text-2xl font-semibold tracking-tight">History hidden</h2>
+              </div>
+              <EyeOff aria-hidden="true" className="size-6 text-amber-300 status-glow" />
             </div>
-            <EyeOff aria-hidden="true" className="size-7 text-amber-300" />
+            <p className="mt-5 text-sm leading-6 text-stone-300">
+              Spenders can hide personal history in the dashboard while the
+              platform still keeps private records for receipts, reconciliation,
+              and fraud protection.
+            </p>
           </div>
-          <p className="mt-5 text-sm leading-6 text-stone-300">
-            Spenders can hide personal history in the dashboard while the
-            platform still keeps private records for receipts, reconciliation,
-            and fraud protection.
-          </p>
-          <Button className="mt-6" variant="secondary" type="button">
+          <Button className="mt-6 w-full sm:w-auto" variant="secondary" type="button">
             <WalletCards aria-hidden="true" className="size-4" />
             Open giving wallet
           </Button>
-        </Card>
+        </PremiumCard>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-5 px-5 pb-6 sm:px-8 xl:grid-cols-[0.85fr_1.15fr]">
-        <Card className="p-5">
+      <section className="mx-auto grid max-w-7xl gap-6 px-5 pb-6 sm:px-8 xl:grid-cols-[0.8fr_1.2fr]">
+        <PremiumCard className="p-6">
           <div className="mb-5 flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-medium text-stone-500">
+              <p className="text-xs font-semibold tracking-wider text-stone-500 dark:text-stone-400 uppercase">
                 Foundation review
               </p>
-              <h2 className="text-2xl font-semibold">Trustee approval flow</h2>
+              <h2 className="text-2xl font-bold tracking-tight">Trustee approval flow</h2>
             </div>
-            <BadgeCheck aria-hidden="true" className="size-6 text-sky-700" />
+            <BadgeCheck aria-hidden="true" className="size-6 text-sky-700 dark:text-sky-500" />
           </div>
           <div className="grid gap-3">
             {verificationQueue.map((item, index) => (
               <div
-                className="flex items-center gap-3 rounded-lg border border-stone-200 p-3"
+                className="flex items-center gap-3 rounded-xl border border-stone-200/50 dark:border-stone-850 p-3.5 transition-colors hover:bg-stone-50/50 dark:hover:bg-stone-900/30"
                 key={item}
               >
-                <div className="grid size-8 place-items-center rounded-md bg-sky-50 text-sm font-semibold text-sky-900">
+                <div className="grid size-8 place-items-center rounded-lg bg-sky-50 text-sm font-semibold text-sky-900 dark:bg-sky-950/45 dark:text-sky-300">
                   {index + 1}
                 </div>
-                <span className="text-sm font-medium text-stone-800">
+                <span className="text-sm font-medium text-stone-800 dark:text-stone-200">
                   {item}
                 </span>
               </div>
             ))}
           </div>
-        </Card>
+        </PremiumCard>
 
-        <Card className="p-5">
+        <PremiumCard className="p-6">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <p className="text-sm font-medium text-stone-500">
+              <p className="text-xs font-semibold tracking-wider text-stone-500 dark:text-stone-400 uppercase">
                 Live requests
               </p>
-              <h2 className="text-2xl font-semibold">
+              <h2 className="text-2xl font-bold tracking-tight">
                 Foundation spending needs
               </h2>
             </div>
-            <Button type="button" variant="outline">
-              <Sparkles aria-hidden="true" className="size-4" />
+            <Button type="button" variant="outline" size="sm">
+              <Sparkles aria-hidden="true" className="size-4 text-emerald-600 dark:text-emerald-450" />
               Generate banner
             </Button>
           </div>
           <div className="grid gap-4 lg:grid-cols-3">
             {donationRequests.map((request) => (
               <article
-                className="rounded-lg border border-stone-200 p-4"
+                className="interactive-card rounded-xl border border-stone-200/60 dark:border-stone-850 bg-white dark:bg-stone-900/30 p-4 flex flex-col justify-between"
                 key={request.title}
               >
-                <div className={`mb-4 h-1.5 rounded-full ${request.accent}`} />
-                <h3 className="text-lg font-semibold">{request.title}</h3>
-                <p className="mt-1 text-sm text-stone-600">
-                  {request.foundation}
-                </p>
-                <div className="mt-5 flex items-end justify-between gap-3">
-                  <div>
-                    <p className="text-sm text-stone-500">Raised</p>
-                    <p className="text-xl font-semibold">{request.raised}</p>
+                <div>
+                  <div className={`mb-4 h-1 rounded-full ${request.accent}`} />
+                  <h3 className="text-base font-semibold tracking-tight leading-snug">{request.title}</h3>
+                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
+                    {request.foundation}
+                  </p>
+                </div>
+                <div>
+                  <div className="mt-5 flex items-end justify-between gap-3">
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Raised</p>
+                      <p className="text-lg font-bold tracking-tight tabular-nums">{request.raised}</p>
+                    </div>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">of {request.target}</p>
                   </div>
-                  <p className="text-sm text-stone-500">of {request.target}</p>
-                </div>
-                <div className="mt-3 h-2 rounded-full bg-stone-200">
-                  <div
-                    className={`h-2 rounded-full ${request.accent}`}
-                    style={{ width: request.progress }}
-                  />
-                </div>
-                <div className="mt-5 flex gap-2">
-                  <Button
-                    aria-label="Open QR code"
-                    size="icon"
-                    type="button"
-                    variant="outline"
-                  >
-                    <QrCode aria-hidden="true" className="size-4" />
-                  </Button>
-                  <Button
-                    className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-md bg-stone-950 px-3 text-sm font-semibold text-white"
-                    type="button"
-                  >
-                    Donate <ArrowRight aria-hidden="true" className="size-4" />
-                  </Button>
+                  <div className="mt-3 h-1.5 rounded-full bg-stone-100 dark:bg-stone-800">
+                    <div
+                      className={`h-1.5 rounded-full ${request.accent}`}
+                      style={{ width: request.progress }}
+                    />
+                  </div>
+                  <div className="mt-5 flex gap-2">
+                    <Button
+                      aria-label="Open QR code"
+                      size="icon"
+                      type="button"
+                      variant="outline"
+                      className="size-9 rounded-lg"
+                    >
+                      <QrCode aria-hidden="true" className="size-4" />
+                    </Button>
+                    <Button
+                      className="h-9 flex-1 text-xs"
+                      type="button"
+                      variant="secondary"
+                    >
+                      Donate <ArrowRight aria-hidden="true" className="size-3.5" />
+                    </Button>
+                  </div>
                 </div>
               </article>
             ))}
           </div>
-        </Card>
+        </PremiumCard>
       </section>
 
-      <section className="border-y border-stone-200 bg-white">
-        <div className="mx-auto grid max-w-7xl gap-5 px-5 py-6 sm:px-8 lg:grid-cols-4">
+      <section className="border-y border-stone-200/60 dark:border-stone-850 bg-white dark:bg-stone-950/50">
+        <div className="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 grid-cols-2 lg:grid-cols-4">
           <Metric icon={Building2} label="Verified foundations" value="24" />
           <Metric icon={FileCheck2} label="Pending Trustee reviews" value="7" />
           <Metric icon={Bell} label="Monthly reminders queued" value="183" />
@@ -272,12 +285,12 @@ function Metric({
   value: string;
 }) {
   return (
-    <Card className="bg-[#fbfaf6] p-4">
+    <Card className="bg-[#fbfaf6] dark:bg-stone-900/20 border-stone-200/40 p-4 transition-all hover:border-stone-200/80">
       <div className="flex items-center justify-between gap-4">
-        <p className="text-sm font-medium text-stone-600">{label}</p>
-        <Icon aria-hidden={true} className="size-5 text-emerald-700" />
+        <p className="text-xs font-semibold tracking-wider text-stone-500 uppercase dark:text-stone-400">{label}</p>
+        <Icon aria-hidden={true} className="size-5 text-emerald-700 dark:text-emerald-500" />
       </div>
-      <p className="mt-4 text-3xl font-semibold">{value}</p>
+      <p className="mt-4 text-3xl font-bold tracking-tight">{value}</p>
     </Card>
   );
 }

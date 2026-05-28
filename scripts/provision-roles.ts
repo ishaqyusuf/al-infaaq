@@ -1,5 +1,3 @@
-import { prisma } from "@al-infaaq/db";
-
 type ProvisionRole = "ADMIN" | "TRUSTEE";
 
 type ProvisionTarget = {
@@ -39,69 +37,71 @@ async function main() {
     );
   }
 
-  const users = await prisma.user.findMany({
-    select: {
-      email: true,
-      id: true,
-      role: true,
-    },
-    where: {
-      email: {
-        in: targets.map((target) => target.email),
-      },
-    },
-  });
-  const usersByEmail = new Map(users.map((user) => [user.email, user]));
-  const missingEmails = targets
-    .filter((target) => !usersByEmail.has(target.email))
-    .map((target) => target.email);
+  const { prisma } = await import("../packages/db/src/client");
 
-  if (missingEmails.length > 0) {
-    throw new Error(
-      `Cannot provision roles for missing Better Auth users: ${missingEmails.join(", ")}`,
-    );
-  }
-
-  for (const target of targets) {
-    const user = usersByEmail.get(target.email);
-
-    if (!user) {
-      continue;
-    }
-
-    await prisma.user.update({
-      data: {
-        role: target.role,
+  try {
+    const users = await prisma.user.findMany({
+      select: {
+        email: true,
+        id: true,
+        role: true,
       },
       where: {
-        id: user.id,
+        email: {
+          in: targets.map((target) => target.email),
+        },
       },
     });
+    const usersByEmail = new Map(users.map((user) => [user.email, user]));
+    const missingEmails = targets
+      .filter((target) => !usersByEmail.has(target.email))
+      .map((target) => target.email);
 
-    await prisma.auditLog.create({
-      data: {
-        action: "user.role_provisioned",
-        actorId: null,
-        metadata: {
-          email: target.email,
-          previousRole: user.role,
+    if (missingEmails.length > 0) {
+      throw new Error(
+        `Cannot provision roles for missing Better Auth users: ${missingEmails.join(", ")}`,
+      );
+    }
+
+    for (const target of targets) {
+      const user = usersByEmail.get(target.email);
+
+      if (!user) {
+        continue;
+      }
+
+      await prisma.user.update({
+        data: {
           role: target.role,
         },
-        target: user.id,
-      },
-    });
+        where: {
+          id: user.id,
+        },
+      });
 
-    console.log(`Provisioned ${target.email} as ${target.role}.`);
+      await prisma.auditLog.create({
+        data: {
+          action: "user.role_provisioned",
+          actorId: null,
+          metadata: {
+            email: target.email,
+            previousRole: user.role,
+            role: target.role,
+          },
+          target: user.id,
+        },
+      });
+
+      console.log(`Provisioned ${target.email} as ${target.role}.`);
+    }
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
 if (import.meta.main) {
-  main()
-    .catch((error) => {
-      console.error(error instanceof Error ? error.message : error);
-      process.exitCode = 1;
-    })
-    .finally(async () => {
-      await prisma.$disconnect();
-    });
+  main().catch((error) => {
+    console.error(error instanceof Error ? error.message : error);
+    process.exitCode = 1;
+  });
 }

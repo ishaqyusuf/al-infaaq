@@ -5,7 +5,7 @@ export function Input({ className, ...props }: React.ComponentProps<"input">) {
   return (
     <input
       className={cn(
-        "flex h-11 w-full rounded-md border border-stone-300 bg-white px-3 py-2 text-base text-stone-950 outline-none transition-colors placeholder:text-stone-500 focus-visible:border-emerald-700 focus-visible:ring-[3px] focus-visible:ring-emerald-700/20 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-red-700 aria-invalid:ring-red-700/20 md:text-sm",
+        "flex h-10 w-full rounded-lg border border-stone-200 bg-white px-3 py-2 text-base text-stone-950 outline-none transition-all placeholder:text-stone-500/80 focus-visible:border-emerald-600 focus-visible:ring-2 focus-visible:ring-emerald-600/20 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-red-600 aria-invalid:ring-red-600/20 md:text-sm dark:border-stone-800 dark:bg-stone-900 dark:text-stone-100 dark:focus-visible:border-emerald-500 dark:focus-visible:ring-emerald-500/20",
         className,
       )}
       data-slot="input"
@@ -13,3 +13,4 @@ export function Input({ className, ...props }: React.ComponentProps<"input">) {
     />
   );
 }
+

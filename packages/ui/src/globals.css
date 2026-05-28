@@ -1,13 +1,63 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f5ef;
-  --foreground: #17130d;
+  /* --- Base Surfaces --- */
+  --background-light: #f7f5ef;
+  --background-card: #ffffff;
+  --background-dark: #12110e;
+  
+  /* --- Typography --- */
+  --foreground-light: #17130d;
+  --foreground-dark: #fbfaf6;
+  --muted-light: #6e675f;
+  --muted-dark: #b8b3ac;
+
+  /* --- Living Emerald --- */
+  --emerald-500: #10b981;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+  --emerald-950: #022c22;
+
+  /* --- Sacred Gold --- */
+  --gold-100: #fef3c7;
+  --gold-500: #d97706;
+  --gold-600: #b45309;
+  --gold-950: #451a03;
+
+  /* --- Slate Boundaries --- */
+  --border-light: rgba(23, 19, 13, 0.08);
+  --border-dark: rgba(251, 250, 246, 0.1);
+
+  /* --- Active Mappings --- */
+  --background: var(--background-light);
+  --foreground: var(--foreground-light);
+  --border-color: var(--border-light);
+  --muted-color: var(--muted-light);
+}
+
+.dark {
+  --background: var(--background-dark);
+  --foreground: var(--foreground-dark);
+  --border-color: var(--border-dark);
+  --muted-color: var(--muted-dark);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-border: var(--border-color);
+  --color-muted: var(--muted-color);
+  
+  --color-emerald-500: var(--emerald-500);
+  --color-emerald-600: var(--emerald-600);
+  --color-emerald-700: var(--emerald-700);
+  --color-emerald-950: var(--emerald-950);
+  
+  --color-gold-100: var(--gold-100);
+  --color-gold-500: var(--gold-500);
+  --color-gold-600: var(--gold-600);
+  --color-gold-950: var(--gold-950);
+
   --font-sans: "Geist", "Geist Fallback", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "Geist Mono", "Geist Mono Fallback", ui-monospace, monospace;
 }
@@ -33,10 +83,35 @@ a {
     background-color 160ms ease,
     border-color 160ms ease,
     color 160ms ease,
-    transform 160ms ease;
+    transform 160ms ease,
+    box-shadow 160ms ease;
 }
 
 button:hover,
 a:hover {
   transform: translateY(-1px);
+}
+
+button:active,
+a:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* Premium Card hover lift */
+.interactive-card {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1), box-shadow 200ms ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.03), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.04); }
+}
+
+.status-glow {
+  animation: pulse-glow 2s infinite ease-in-out;
 }
