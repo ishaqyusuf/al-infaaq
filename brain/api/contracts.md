@@ -21,6 +21,9 @@ Test coverage:
   imports in page components.
 - API contract tests enforce tRPC router registration and funded public request
   visibility.
+- API workflow tests call real tRPC procedures with mocked database/payment
+  boundaries for Trustee decisions, admin status changes, request lifecycle
+  guards, and donation checkout persistence.
 
 ## Foundation Submit For Review
 
@@ -35,6 +38,8 @@ Input:
 
 Behavior:
 
+- Spender and foundation accounts can submit a foundation profile for Trustee
+  review.
 - Upserts the caller's foundation profile.
 - Moves the foundation to `PENDING_REVIEW`.
 - Creates a pending Trustee review when one does not already exist.
@@ -55,6 +60,15 @@ Behavior:
 - Rejection moves the foundation to `REJECTED`.
 - Decision notes, reviewer, decision time, and audit logs are stored.
 
+## Admin Foundation Status
+
+Behavior:
+
+- `admin.suspendFoundation` moves a foundation to `SUSPENDED`.
+- `admin.restoreFoundation` moves a foundation back to `APPROVED`.
+- Both privileged admin mutations write audit logs with the acting admin and
+  target foundation.
+
 ## Donation Request Lifecycle
 
 Input:
@@ -72,6 +86,11 @@ Behavior:
 - Publishing is blocked for unapproved foundations.
 - Public request reads include published and funded requests; funded requests
   remain visible but should not show a donation CTA.
+- Public request reads, checkout starts, request publishing, and banner
+  generation must all require an approved foundation.
+- Donation checkout starts are allowed only for currently published requests;
+  funded, archived, draft, rejected-foundation, and suspended-foundation requests
+  are not donation targets.
 
 ## Spender Goal Save
 
@@ -88,6 +107,20 @@ Behavior:
   positive.
 - Clears future unsent reminders when the goal is set to zero.
 - Writes a goal saved audit log.
+
+## Onboarding Next Step
+
+Behavior:
+
+- `onboarding.nextStep` is a protected tRPC query used by the dashboard to
+  resolve role-aware next steps.
+- Spenders without a positive monthly goal are redirected to `/goals`.
+- Foundations without an approved foundation profile are redirected to
+  `/foundations/apply`.
+- Approved foundations continue to `/foundation/requests`.
+- Trustees and admins are treated as complete and receive their role workspaces.
+- The web dashboard must use this tRPC contract instead of importing Prisma or
+  duplicating profile-completion rules.
 
 ## Reminder Jobs
 
@@ -138,6 +171,23 @@ Behavior:
 - Foundation surfaces only receive aggregate donation progress.
 - This is the only product checkout initialization entrypoint; raw provider
   checkout procedures and route handlers should not bypass donation persistence.
+- Workflow tests must prove pending donation persistence happens before the
+  provider checkout URL is returned.
+
+## Payment Webhook State Transitions
+
+Behavior:
+
+- Paystack and Lemon Squeezy webhooks update persisted donations through the
+  shared payment state helpers.
+- Success events are idempotent for already-succeeded donations.
+- First success marks the donation `SUCCEEDED`, increments the linked request's
+  `raisedKobo`, and moves published requests to `FUNDED` when the target is met.
+- Refund events are idempotent for already-refunded donations.
+- Refunds of successful donations decrement `raisedKobo` and reopen funded
+  requests to `PUBLISHED` when the raised total drops below target.
+- Failure events only move pending donations to `FAILED`.
+- Workflow tests must prove these status and aggregate-total transitions.
 
 ## Admin Dashboard Reporting
 

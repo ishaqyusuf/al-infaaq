@@ -14,7 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Al-Infaaq",
-  description: "Anonymous sadaqah giving for verified foundations.",
+  description:
+    "Anonymous sadaqah giving for Trustee-reviewed foundations on alinfaaq.",
 };
 
 export default function RootLayout({
@@ -24,7 +25,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      className={`${geistSans.variable} ${geistMono.variable} dark h-full`}
       lang="en"
     >
       <body className="min-h-full antialiased">{children}</body>

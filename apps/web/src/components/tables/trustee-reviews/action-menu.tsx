@@ -6,16 +6,27 @@ import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useRef, useState } from "react";
 import { trpcClient } from "@/lib/trpc-client";
+import type { TrusteeReviewRow } from "./columns";
 
-type ReviewDecisionFormProps = {
-  reviewId: string;
-};
-
-export function ReviewDecisionForm({ reviewId }: ReviewDecisionFormProps) {
+export function TrusteeReviewActionMenu({
+  review,
+}: {
+  review: TrusteeReviewRow;
+}) {
   const router = useRouter();
   const formRef = useRef<HTMLFormElement>(null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState<"approve" | "reject" | null>(null);
+
+  if (review.status !== "PENDING") {
+    return (
+      <p className="text-sm text-stone-600 dark:text-stone-400">
+        Decided by {review.trustee?.email ?? "a Trustee"}
+        {review.decidedAt ? ` on ${review.decidedAt.toLocaleDateString()}` : ""}
+        .
+      </p>
+    );
+  }
 
   async function decide(decision: "approve" | "reject") {
     setError(null);
@@ -30,9 +41,15 @@ export function ReviewDecisionForm({ reviewId }: ReviewDecisionFormProps) {
 
     try {
       if (decision === "approve") {
-        await trpcClient.trustee.approveReview.mutate({ notes, reviewId });
+        await trpcClient.trustee.approveReview.mutate({
+          notes,
+          reviewId: review.id,
+        });
       } else {
-        await trpcClient.trustee.rejectReview.mutate({ notes, reviewId });
+        await trpcClient.trustee.rejectReview.mutate({
+          notes,
+          reviewId: review.id,
+        });
       }
       router.refresh();
     } catch (caughtError) {
@@ -62,7 +79,7 @@ export function ReviewDecisionForm({ reviewId }: ReviewDecisionFormProps) {
       />
       {error ? <p className="text-sm text-red-700">{error}</p> : null}
       <div className="flex flex-wrap gap-2">
-        <Button disabled={isPending !== null} type="submit">
+        <Button disabled={isPending !== null} size="sm" type="submit">
           {isPending === "approve" ? "Approving..." : "Approve"}
         </Button>
         <Button
@@ -70,6 +87,7 @@ export function ReviewDecisionForm({ reviewId }: ReviewDecisionFormProps) {
           onClick={() => {
             void decide("reject");
           }}
+          size="sm"
           type="button"
           variant="outline"
         >

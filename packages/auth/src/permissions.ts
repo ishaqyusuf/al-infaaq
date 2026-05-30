@@ -20,7 +20,7 @@ const rolePermissions = {
     "requests:publish",
   ],
   foundation: ["foundations:apply", "requests:create", "requests:publish"],
-  spender: ["donations:create", "donations:read-own"],
+  spender: ["donations:create", "donations:read-own", "foundations:apply"],
   trustee: ["foundations:approve"],
 } satisfies Record<UserRole, Permission[]>;
 

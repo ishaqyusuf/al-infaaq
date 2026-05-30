@@ -42,7 +42,7 @@ export function DonationForm({ requestId }: { requestId: string }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid gap-5 rounded-lg border border-stone-200 bg-white p-5">
+      <div className="grid gap-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 p-5">
         <Label>
           Amount in NGN
           <Input min="1" name="amountNaira" required step="1" type="number" />
@@ -58,7 +58,7 @@ export function DonationForm({ requestId }: { requestId: string }) {
         <Button disabled={isPending} type="submit">
           {isPending ? "Opening payment..." : "Continue to payment"}
         </Button>
-        <p className="text-xs leading-5 text-stone-500">
+        <p className="text-xs leading-5 text-stone-500 dark:text-stone-500">
           The foundation will see the donation amount and request progress, not
           your name, email, or account identifier.
         </p>

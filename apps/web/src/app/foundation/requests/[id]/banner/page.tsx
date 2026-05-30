@@ -24,14 +24,14 @@ export default async function BannerPreviewPage({
   const latestBanner = request.banners[0] ?? null;
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-5 py-8 text-stone-950 sm:px-8">
+    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
       <section className="mx-auto grid max-w-5xl gap-5">
         <Card className="p-5">
-          <p className="text-sm font-medium text-stone-500">
+          <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
             Fundraising banner
           </p>
           <h1 className="mt-2 text-3xl font-semibold">{request.title}</h1>
-          <p className="mt-3 text-sm leading-6 text-stone-600">
+          <p className="mt-3 text-sm leading-6 text-stone-600 dark:text-stone-400">
             Generate a QR-backed banner, preview the latest generated asset, and
             use the download link for sharing.
           </p>
@@ -42,7 +42,7 @@ export default async function BannerPreviewPage({
           <Card className="p-5">
             <Image
               alt={`Fundraising banner for ${request.title}`}
-              className="h-auto w-full rounded-lg border border-stone-200"
+              className="h-auto w-full rounded-lg border border-stone-200 dark:border-stone-800"
               height={630}
               src={latestBanner.imageUrl}
               unoptimized
@@ -50,14 +50,14 @@ export default async function BannerPreviewPage({
             />
             <div className="mt-4 flex flex-wrap gap-3">
               <a
-                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 px-4 text-sm font-semibold"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-4 text-sm font-semibold"
                 download={`alinfaaq-${request.id}-banner.svg`}
                 href={`/api/requests/${request.id}/banner`}
               >
                 Download banner
               </a>
               <a
-                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 px-4 text-sm font-semibold"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-4 text-sm font-semibold"
                 href={`/requests/${request.id}`}
               >
                 Open request
@@ -66,7 +66,7 @@ export default async function BannerPreviewPage({
           </Card>
         ) : (
           <Card className="p-5">
-            <p className="text-sm text-stone-600">
+            <p className="text-sm text-stone-600 dark:text-stone-400">
               No banner has been generated yet.
             </p>
           </Card>

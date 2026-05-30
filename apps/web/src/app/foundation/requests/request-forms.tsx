@@ -52,7 +52,7 @@ export function CreateRequestForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid gap-5 rounded-lg border border-stone-200 bg-white p-5">
+      <div className="grid gap-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 p-5">
         <h2 className="text-xl font-semibold">Create request</h2>
         <Label>
           Title
@@ -74,57 +74,5 @@ export function CreateRequestForm() {
         </div>
       </div>
     </form>
-  );
-}
-
-export function RequestMutationButton({
-  children,
-  requestId,
-  variant,
-}: {
-  children: string;
-  requestId: string;
-  variant: "archive" | "publish";
-}) {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [isPending, setIsPending] = useState(false);
-
-  async function mutate() {
-    setError(null);
-    setIsPending(true);
-
-    try {
-      if (variant === "archive") {
-        await trpcClient.requests.archive.mutate({ requestId });
-      } else {
-        await trpcClient.requests.publish.mutate({ requestId });
-      }
-      router.refresh();
-    } catch (caughtError) {
-      setError(
-        caughtError instanceof Error
-          ? caughtError.message
-          : "Unable to update request.",
-      );
-    } finally {
-      setIsPending(false);
-    }
-  }
-
-  return (
-    <div className="grid gap-2">
-      <Button
-        disabled={isPending}
-        onClick={() => {
-          void mutate();
-        }}
-        type="button"
-        variant={variant === "archive" ? "outline" : "default"}
-      >
-        {isPending ? "Saving..." : children}
-      </Button>
-      {error ? <p className="text-xs text-red-700">{error}</p> : null}
-    </div>
   );
 }

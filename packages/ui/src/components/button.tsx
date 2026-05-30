@@ -16,11 +16,16 @@ const buttonVariants = cva(
         sm: "h-9 px-3 text-xs",
       },
       variant: {
-        default: "bg-stone-950 text-white hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-stone-250 shadow-sm",
-        destructive: "bg-red-700 text-white hover:bg-red-800 dark:bg-red-650 dark:hover:bg-red-750",
-        ghost: "hover:bg-stone-100/80 dark:hover:bg-stone-900/60 text-stone-700 dark:text-stone-300",
-        outline: "border border-stone-200 bg-transparent hover:bg-stone-50/80 text-stone-900 dark:border-stone-800 dark:text-stone-100 dark:hover:bg-stone-900/50",
-        secondary: "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-650",
+        default:
+          "bg-stone-950 text-white hover:bg-stone-800 dark:bg-stone-100 dark:text-stone-950 dark:hover:bg-stone-250 shadow-sm",
+        destructive:
+          "bg-red-700 text-white hover:bg-red-800 dark:bg-red-650 dark:hover:bg-red-750",
+        ghost:
+          "hover:bg-stone-100/80 dark:hover:bg-stone-900/60 text-stone-700 dark:text-stone-300",
+        outline:
+          "border border-stone-200 bg-transparent hover:bg-stone-50/80 text-stone-900 dark:border-stone-800 dark:text-stone-100 dark:hover:bg-stone-900/50",
+        secondary:
+          "bg-emerald-600 text-white hover:bg-emerald-700 dark:bg-emerald-700 dark:hover:bg-emerald-650",
       },
     },
   },
@@ -42,4 +47,3 @@ function Button({
 }
 
 export { Button, buttonVariants };
-

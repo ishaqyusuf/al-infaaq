@@ -20,6 +20,7 @@
 - `goals.save`
 - `goals.summary`
 - `health.status`
+- `onboarding.nextStep`
 - `requests.archive`
 - `requests.bannerPreview`
 - `requests.create`

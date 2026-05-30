@@ -11,21 +11,24 @@ export default async function SignInPage() {
   }
 
   return (
-    <main className="grid min-h-screen bg-[#f7f5ef] px-5 py-10 text-stone-950">
+    <main className="grid min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-10 text-stone-950 dark:text-stone-50">
       <section className="mx-auto grid w-full max-w-md content-center">
         <div className="mb-8">
           <Link className="text-sm font-semibold text-emerald-800" href="/">
             Al-Infaaq
           </Link>
           <h1 className="mt-4 text-3xl font-semibold">Sign in</h1>
-          <p className="mt-2 text-sm leading-6 text-stone-600">
+          <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-400">
             Open your private giving, foundation, Trustee, or admin workspace.
           </p>
         </div>
         <AuthForm />
-        <p className="mt-6 text-sm text-stone-600">
+        <p className="mt-6 text-sm text-stone-600 dark:text-stone-400">
           New to Al-Infaaq?{" "}
-          <Link className="font-semibold text-stone-950" href="/sign-up">
+          <Link
+            className="font-semibold text-stone-950 dark:text-stone-50"
+            href="/sign-up"
+          >
             Create an account
           </Link>
         </p>

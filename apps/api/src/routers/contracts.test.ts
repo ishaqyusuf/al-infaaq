@@ -17,6 +17,7 @@ describe("tRPC router contracts", () => {
       "donations",
       "foundations",
       "goals",
+      "onboarding",
       "requests",
       "trustee",
     ]) {
@@ -24,7 +25,7 @@ describe("tRPC router contracts", () => {
     }
   });
 
-  test("product routers use permission procedures for protected workflows", () => {
+  test("product routers use protected procedures for protected workflows", () => {
     const productRouterFiles = readdirSync(routersRoot)
       .filter((name) => name.endsWith(".route.ts"))
       .filter((name) => name !== "health.route.ts");
@@ -32,14 +33,49 @@ describe("tRPC router contracts", () => {
     for (const file of productRouterFiles) {
       const source = readRouter(file);
 
-      expect(source).toContain("permissionProcedure");
+      expect(
+        source.includes("permissionProcedure") ||
+          source.includes("protectedProcedure"),
+      ).toBe(true);
     }
+  });
+
+  test("onboarding router owns profile-completion redirects", () => {
+    const source = readRouter("onboarding.route.ts");
+
+    expect(source).toContain("nextStep");
+    expect(source).toContain("spenderProfile.findUnique");
+    expect(source).toContain("foundation.findUnique");
+    expect(source).toContain('href: "/goals"');
+    expect(source).toContain('href: "/foundations/apply"');
   });
 
   test("public request reads keep funded requests visible", () => {
     const source = readRouter("requests.route.ts");
 
+    expect(source).toContain('foundation: {\n            status: "APPROVED"');
     expect(source).toContain('in: ["PUBLISHED", "FUNDED"]');
+  });
+
+  test("request lifecycle blocks unapproved foundations from collecting", () => {
+    const requestsSource = readRouter("requests.route.ts");
+    const donationsSource = readRouter("donations.route.ts");
+
+    expect(requestsSource).toContain('status: "APPROVED", userId');
+    expect(requestsSource).toContain(
+      "An approved foundation is required to create requests.",
+    );
+    expect(requestsSource).toContain(
+      "Only approved foundations can publish requests.",
+    );
+    expect(requestsSource).toContain(
+      "Only approved foundations can generate banners.",
+    );
+    expect(donationsSource).toContain(
+      'foundation: {\n            status: "APPROVED"',
+    );
+    expect(donationsSource).toContain('status: "PUBLISHED"');
+    expect(donationsSource).toContain("Donation request is not available.");
   });
 
   test("banner generation is a stored tRPC workflow", () => {
@@ -73,5 +109,17 @@ describe("tRPC router contracts", () => {
     expect(source).toContain("donationStatusCounts");
     expect(source).toContain("providerTotals");
     expect(source).toContain("reconciliationItems");
+  });
+
+  test("privileged Trustee and admin actions write audit logs", () => {
+    const adminSource = readRouter("admin.route.ts");
+    const trusteeSource = readRouter("trustee.route.ts");
+
+    expect(adminSource).toContain("prisma.auditLog.create");
+    expect(adminSource).toContain("foundation.restored");
+    expect(adminSource).toContain("foundation.suspended");
+    expect(trusteeSource).toContain("prisma.auditLog.create");
+    expect(trusteeSource).toContain("foundation.trustee_review_approved");
+    expect(trusteeSource).toContain("foundation.trustee_review_rejected");
   });
 });

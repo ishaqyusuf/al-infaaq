@@ -27,7 +27,7 @@ Done when:
 - Use Better Auth for production authentication.
 - Support spender, foundation, Trustee, and admin role assignment.
 - Protect web pages and API procedures with permission checks.
-- Add onboarding redirects for incomplete spender and foundation profiles.
+- Maintain onboarding redirects for incomplete spender and foundation profiles.
 - Add audit events for privileged admin and Trustee actions.
 
 Done when:

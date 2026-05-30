@@ -40,12 +40,18 @@ function normalizeRole(role: unknown): UserRole {
 
 export async function getServerAuthSession(): Promise<WebAuthSession | null> {
   const requestHeaders = await headers();
-  const response = await fetch(`${apiOrigin}/api/auth/get-session`, {
-    cache: "no-store",
-    headers: {
-      cookie: requestHeaders.get("cookie") ?? "",
-    },
-  });
+  let response: Response;
+
+  try {
+    response = await fetch(`${apiOrigin}/api/auth/get-session`, {
+      cache: "no-store",
+      headers: {
+        cookie: requestHeaders.get("cookie") ?? "",
+      },
+    });
+  } catch {
+    return null;
+  }
 
   if (!response.ok) {
     return null;

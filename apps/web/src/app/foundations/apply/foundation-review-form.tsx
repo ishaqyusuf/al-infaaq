@@ -61,7 +61,7 @@ export function FoundationReviewForm({
 
   return (
     <form onSubmit={handleSubmit}>
-      <div className="grid gap-5 rounded-lg border border-stone-200 bg-white p-5">
+      <div className="grid gap-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 p-5">
         <Label>
           Foundation name
           <Input defaultValue={defaultValues.name ?? ""} name="name" required />

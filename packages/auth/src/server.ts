@@ -1,6 +1,7 @@
 import { prisma } from "@al-infaaq/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { authCookiePrefix } from "./shared";
 
 function uniqueOrigins(origins: Array<string | undefined>) {
   return [...new Set(origins.filter(Boolean))] as string[];
@@ -16,7 +17,14 @@ const webOrigin =
   process.env.NEXT_PUBLIC_APP_URL ??
   "http://localhost:3000";
 
+export function getAuthSecret(): string {
+  return process.env.BETTER_AUTH_SECRET ?? "al-infaaq-local-dev-secret";
+}
+
 export const auth = betterAuth({
+  advanced: {
+    cookiePrefix: authCookiePrefix,
+  },
   appName: "Al-Infaaq",
   basePath: "/api/auth",
   baseURL: apiOrigin,
@@ -27,6 +35,7 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 8,
   },
+  secret: getAuthSecret(),
   trustedOrigins: uniqueOrigins([
     webOrigin,
     process.env.NEXT_PUBLIC_APP_URL,

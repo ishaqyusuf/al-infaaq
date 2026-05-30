@@ -7,39 +7,25 @@ import {
   Shield,
 } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { requireServerAuthSession } from "@/lib/server-auth";
+import { createServerTrpcCaller } from "@/lib/trpc-server";
 import { SignOutButton } from "./sign-out-button";
 
-const roleNextActions = {
-  admin: {
-    href: "/admin",
-    label: "Review platform operations",
-    summary: "Manage users, foundations, requests, donations, and audit logs.",
-  },
-  foundation: {
-    href: "/foundations/apply",
-    label: "Continue foundation onboarding",
-    summary: "Complete your profile and submit it for Trustee review.",
-  },
-  spender: {
-    href: "/goals",
-    label: "Set monthly giving goal",
-    summary: "Create a private sadaqah target and track progress quietly.",
-  },
-  trustee: {
-    href: "/trustee/reviews",
-    label: "Open Trustee review queue",
-    summary: "Approve or reject foundation review requests.",
-  },
-};
+export const dynamic = "force-dynamic";
 
 export default async function DashboardPage() {
   const session = await requireServerAuthSession();
-  const nextAction = roleNextActions[session.user.role];
+  const trpc = await createServerTrpcCaller();
+  const nextAction = await trpc.onboarding.nextStep();
+
+  if (!nextAction.complete) {
+    redirect(nextAction.href);
+  }
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] text-stone-950">
-      <section className="border-b border-stone-200 bg-white">
+    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] text-stone-950 dark:text-stone-50">
+      <section className="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 sm:px-8 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
             <div className="grid size-11 place-items-center rounded-lg bg-stone-950 text-white">
@@ -49,7 +35,9 @@ export default async function DashboardPage() {
               <Link className="text-xl font-semibold" href="/">
                 Al-Infaaq
               </Link>
-              <p className="text-sm text-stone-600">Private workspace</p>
+              <p className="text-sm text-stone-600 dark:text-stone-400">
+                Private workspace
+              </p>
             </div>
           </div>
           <SignOutButton />
@@ -66,7 +54,7 @@ export default async function DashboardPage() {
               <h1 className="mt-4 text-3xl font-semibold">
                 {session.user.name ?? session.user.email ?? "Welcome"}
               </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600">
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600 dark:text-stone-400">
                 Your role decides which workflows you can open. Foundation and
                 Trustee access is intentionally assigned through controlled
                 onboarding so collection approvals stay accountable.
@@ -77,8 +65,10 @@ export default async function DashboardPage() {
         </Card>
 
         <Card className="p-5">
-          <p className="text-sm font-medium text-stone-500">Session</p>
-          <p className="mt-3 break-words text-sm text-stone-700">
+          <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
+            Session
+          </p>
+          <p className="mt-3 break-words text-sm text-stone-700 dark:text-stone-300">
             {session.user.email ?? session.user.id}
           </p>
         </Card>
@@ -93,7 +83,7 @@ export default async function DashboardPage() {
             />
             <div>
               <h2 className="text-xl font-semibold">{nextAction.label}</h2>
-              <p className="mt-2 text-sm leading-6 text-stone-600">
+              <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-400">
                 {nextAction.summary}
               </p>
               <Link
@@ -114,7 +104,7 @@ export default async function DashboardPage() {
             />
             <div>
               <h2 className="text-xl font-semibold">Trust boundary</h2>
-              <p className="mt-2 text-sm leading-6 text-stone-600">
+              <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-400">
                 Public pages show foundation and request progress, never private
                 spender identity fields.
               </p>

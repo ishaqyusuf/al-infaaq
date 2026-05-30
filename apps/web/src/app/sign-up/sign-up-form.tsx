@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@al-infaaq/ui/button";
+import { Input } from "@al-infaaq/ui/input";
+import { Label } from "@al-infaaq/ui/label";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
@@ -37,44 +39,41 @@ export function SignUpForm() {
 
   return (
     <form
-      className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm"
+      className="rounded-lg border border-stone-200 bg-white p-5 shadow-sm dark:border-stone-800 dark:bg-stone-950"
       onSubmit={handleSubmit}
     >
       <div className="grid gap-4">
-        <label className="grid gap-2 text-sm font-medium text-stone-800">
+        <Label>
           Name
-          <input
+          <Input
             autoComplete="name"
-            className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
             onChange={(event) => setName(event.target.value)}
             required
             type="text"
             value={name}
           />
-        </label>
-        <label className="grid gap-2 text-sm font-medium text-stone-800">
+        </Label>
+        <Label>
           Email
-          <input
+          <Input
             autoComplete="email"
-            className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
             onChange={(event) => setEmail(event.target.value)}
             required
             type="email"
             value={email}
           />
-        </label>
-        <label className="grid gap-2 text-sm font-medium text-stone-800">
+        </Label>
+        <Label>
           Password
-          <input
+          <Input
             autoComplete="new-password"
-            className="h-11 rounded-md border border-stone-300 px-3 text-base outline-none focus:border-emerald-700"
             minLength={8}
             onChange={(event) => setPassword(event.target.value)}
             required
             type="password"
             value={password}
           />
-        </label>
+        </Label>
       </div>
       {error ? (
         <p className="mt-4 rounded-md bg-red-50 px-3 py-2 text-sm text-red-800">

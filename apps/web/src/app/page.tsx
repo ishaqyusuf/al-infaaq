@@ -66,8 +66,8 @@ const providerStatus = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f7f5ef] text-stone-950">
-      <section className="border-b border-stone-200 bg-white">
+    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] text-stone-950 dark:text-stone-50">
+      <section className="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
             <div className="grid size-11 place-items-center rounded-lg bg-stone-950 text-white">
@@ -75,7 +75,7 @@ export default function Home() {
             </div>
             <div>
               <p className="text-xl font-semibold">Al-Infaaq</p>
-              <p className="text-sm text-stone-600">
+              <p className="text-sm text-stone-600 dark:text-stone-400">
                 Anonymous sadaqah operations
               </p>
             </div>
@@ -87,13 +87,13 @@ export default function Home() {
               </Badge>
             ))}
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 px-3 text-sm font-semibold hover:bg-stone-50"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-3 text-sm font-semibold hover:bg-stone-50 dark:bg-stone-900"
               href="/requests"
             >
               Browse requests
             </Link>
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 px-3 text-sm font-semibold hover:bg-stone-50"
+              className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-3 text-sm font-semibold hover:bg-stone-50 dark:bg-stone-900"
               href="/sign-in"
             >
               Sign in
@@ -117,22 +117,30 @@ export default function Home() {
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                 </span>
-                <ShieldCheck aria-hidden="true" className="size-3.5 text-emerald-700 dark:text-emerald-500" />
+                <ShieldCheck
+                  aria-hidden="true"
+                  className="size-3.5 text-emerald-700 dark:text-emerald-500"
+                />
                 Kitaab and Sunnah aligned giving
               </div>
               <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl dark:text-stone-50">
                 Spend quietly. Verify carefully. Move sadaqah faster.
               </h1>
               <p className="mt-4 max-w-xl text-base leading-7 text-stone-600 dark:text-stone-400">
-                Al-Muhsinoon set private monthly goals, verified foundations
-                publish real needs, and trusted Trustee accounts approve
-                foundations before they receive public donations.
+                Al-Muhsinoon set private monthly goals, Trustee-reviewed
+                foundations publish real needs, and trusted Trustee accounts
+                approve foundations before they receive public donations.
               </p>
             </div>
-            <div className="grid min-w-64 gap-3 rounded-xl border border-stone-200/50 bg-[#fbfaf7] dark:border-stone-850 dark:bg-stone-900/40 p-5">
+            <div className="grid min-w-64 gap-3 rounded-xl border border-stone-200 dark:border-stone-800/50 bg-[#fbfaf7] dark:bg-stone-900/40 p-5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">Monthly goal</span>
-                <Goal aria-hidden="true" className="size-5 text-emerald-700 dark:text-emerald-500" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+                  Monthly goal
+                </span>
+                <Goal
+                  aria-hidden="true"
+                  className="size-5 text-emerald-700 dark:text-emerald-500"
+                />
               </div>
               <p className="text-3xl font-bold tracking-tight">NGN 75,000</p>
               <div className="h-1.5 rounded-full bg-stone-200/80 dark:bg-stone-800">
@@ -150,10 +158,17 @@ export default function Home() {
           <div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">Privacy mode</p>
-                <h2 className="mt-1 text-2xl font-semibold tracking-tight">History hidden</h2>
+                <p className="text-[10px] font-semibold uppercase tracking-wider text-stone-400">
+                  Privacy mode
+                </p>
+                <h2 className="mt-1 text-2xl font-semibold tracking-tight">
+                  History hidden
+                </h2>
               </div>
-              <EyeOff aria-hidden="true" className="size-6 text-amber-300 status-glow" />
+              <EyeOff
+                aria-hidden="true"
+                className="size-6 text-amber-300 status-glow"
+              />
             </div>
             <p className="mt-5 text-sm leading-6 text-stone-300">
               Spenders can hide personal history in the dashboard while the
@@ -161,7 +176,11 @@ export default function Home() {
               and fraud protection.
             </p>
           </div>
-          <Button className="mt-6 w-full sm:w-auto" variant="secondary" type="button">
+          <Button
+            className="mt-6 w-full sm:w-auto"
+            variant="secondary"
+            type="button"
+          >
             <WalletCards aria-hidden="true" className="size-4" />
             Open giving wallet
           </Button>
@@ -175,14 +194,19 @@ export default function Home() {
               <p className="text-xs font-semibold tracking-wider text-stone-500 dark:text-stone-400 uppercase">
                 Foundation review
               </p>
-              <h2 className="text-2xl font-bold tracking-tight">Trustee approval flow</h2>
+              <h2 className="text-2xl font-bold tracking-tight">
+                Trustee approval flow
+              </h2>
             </div>
-            <BadgeCheck aria-hidden="true" className="size-6 text-sky-700 dark:text-sky-500" />
+            <BadgeCheck
+              aria-hidden="true"
+              className="size-6 text-sky-700 dark:text-sky-500"
+            />
           </div>
           <div className="grid gap-3">
             {verificationQueue.map((item, index) => (
               <div
-                className="flex items-center gap-3 rounded-xl border border-stone-200/50 dark:border-stone-850 p-3.5 transition-colors hover:bg-stone-50/50 dark:hover:bg-stone-900/30"
+                className="flex items-center gap-3 rounded-xl border border-stone-200 dark:border-stone-800/50 p-3.5 transition-colors hover:bg-stone-50 dark:bg-stone-900/50 dark:hover:bg-stone-900/30"
                 key={item}
               >
                 <div className="grid size-8 place-items-center rounded-lg bg-sky-50 text-sm font-semibold text-sky-900 dark:bg-sky-950/45 dark:text-sky-300">
@@ -207,19 +231,24 @@ export default function Home() {
               </h2>
             </div>
             <Button type="button" variant="outline" size="sm">
-              <Sparkles aria-hidden="true" className="size-4 text-emerald-600 dark:text-emerald-450" />
+              <Sparkles
+                aria-hidden="true"
+                className="size-4 text-emerald-600 dark:text-emerald-450"
+              />
               Generate banner
             </Button>
           </div>
           <div className="grid gap-4 lg:grid-cols-3">
             {donationRequests.map((request) => (
               <article
-                className="interactive-card rounded-xl border border-stone-200/60 dark:border-stone-850 bg-white dark:bg-stone-900/30 p-4 flex flex-col justify-between"
+                className="interactive-card rounded-xl border border-stone-200 dark:border-stone-800/60 bg-white dark:bg-stone-900/30 p-4 flex flex-col justify-between"
                 key={request.title}
               >
                 <div>
                   <div className={`mb-4 h-1 rounded-full ${request.accent}`} />
-                  <h3 className="text-base font-semibold tracking-tight leading-snug">{request.title}</h3>
+                  <h3 className="text-base font-semibold tracking-tight leading-snug">
+                    {request.title}
+                  </h3>
                   <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
                     {request.foundation}
                   </p>
@@ -227,12 +256,18 @@ export default function Home() {
                 <div>
                   <div className="mt-5 flex items-end justify-between gap-3">
                     <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">Raised</p>
-                      <p className="text-lg font-bold tracking-tight tabular-nums">{request.raised}</p>
+                      <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
+                        Raised
+                      </p>
+                      <p className="text-lg font-bold tracking-tight tabular-nums">
+                        {request.raised}
+                      </p>
                     </div>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">of {request.target}</p>
+                    <p className="text-xs text-stone-500 dark:text-stone-400">
+                      of {request.target}
+                    </p>
                   </div>
-                  <div className="mt-3 h-1.5 rounded-full bg-stone-100 dark:bg-stone-800">
+                  <div className="mt-3 h-1.5 rounded-full bg-stone-100 dark:bg-stone-900 dark:bg-stone-800">
                     <div
                       className={`h-1.5 rounded-full ${request.accent}`}
                       style={{ width: request.progress }}
@@ -253,7 +288,8 @@ export default function Home() {
                       type="button"
                       variant="secondary"
                     >
-                      Donate <ArrowRight aria-hidden="true" className="size-3.5" />
+                      Donate{" "}
+                      <ArrowRight aria-hidden="true" className="size-3.5" />
                     </Button>
                   </div>
                 </div>
@@ -263,7 +299,7 @@ export default function Home() {
         </PremiumCard>
       </section>
 
-      <section className="border-y border-stone-200/60 dark:border-stone-850 bg-white dark:bg-stone-950/50">
+      <section className="border-y border-stone-200 dark:border-stone-800/60 bg-white dark:bg-stone-950/50">
         <div className="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 grid-cols-2 lg:grid-cols-4">
           <Metric icon={Building2} label="Verified foundations" value="24" />
           <Metric icon={FileCheck2} label="Pending Trustee reviews" value="7" />
@@ -285,10 +321,15 @@ function Metric({
   value: string;
 }) {
   return (
-    <Card className="bg-[#fbfaf6] dark:bg-stone-900/20 border-stone-200/40 p-4 transition-all hover:border-stone-200/80">
+    <Card className="bg-[#fbfaf6] dark:bg-stone-900/20 border-stone-200 dark:border-stone-800/40 p-4 transition-all hover:border-stone-200 dark:border-stone-800/80">
       <div className="flex items-center justify-between gap-4">
-        <p className="text-xs font-semibold tracking-wider text-stone-500 uppercase dark:text-stone-400">{label}</p>
-        <Icon aria-hidden={true} className="size-5 text-emerald-700 dark:text-emerald-500" />
+        <p className="text-xs font-semibold tracking-wider text-stone-500 uppercase dark:text-stone-400">
+          {label}
+        </p>
+        <Icon
+          aria-hidden={true}
+          className="size-5 text-emerald-700 dark:text-emerald-500"
+        />
       </div>
       <p className="mt-4 text-3xl font-bold tracking-tight">{value}</p>
     </Card>

@@ -26,10 +26,10 @@ export default async function DonationCompletePage({
   }
 
   return (
-    <main className="grid min-h-screen bg-[#f7f5ef] px-5 py-8 text-stone-950 sm:px-8">
+    <main className="grid min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
       <section className="mx-auto grid w-full max-w-md content-center">
         <Card className="p-5">
-          <p className="text-sm font-medium text-stone-500">
+          <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
             Donation complete
           </p>
           <h1 className="mt-2 text-3xl font-semibold">{status}</h1>

@@ -78,7 +78,7 @@ export function GivingGoalForm({ defaultValues }: GivingGoalFormProps) {
           <option value="WHATSAPP">WhatsApp</option>
         </Select>
       </Label>
-      <label className="flex items-center gap-3 text-sm font-medium text-stone-800">
+      <label className="flex items-center gap-3 text-sm font-medium text-stone-800 dark:text-stone-100">
         <input
           defaultChecked={defaultValues.showSpendingHistory}
           name="showSpendingHistory"

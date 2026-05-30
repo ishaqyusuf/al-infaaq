@@ -4,17 +4,17 @@ import { Button } from "@al-infaaq/ui/button";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { trpcClient } from "@/lib/trpc-client";
+import type { AdminFoundationRow } from "./columns";
 
-export function FoundationStatusButton({
-  foundationId,
-  isSuspended,
+export function AdminFoundationActionMenu({
+  foundation,
 }: {
-  foundationId: string;
-  isSuspended: boolean;
+  foundation: AdminFoundationRow;
 }) {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const isSuspended = foundation.status === "SUSPENDED";
 
   async function updateStatus() {
     setError(null);
@@ -22,9 +22,13 @@ export function FoundationStatusButton({
 
     try {
       if (isSuspended) {
-        await trpcClient.admin.restoreFoundation.mutate({ foundationId });
+        await trpcClient.admin.restoreFoundation.mutate({
+          foundationId: foundation.id,
+        });
       } else {
-        await trpcClient.admin.suspendFoundation.mutate({ foundationId });
+        await trpcClient.admin.suspendFoundation.mutate({
+          foundationId: foundation.id,
+        });
       }
       router.refresh();
     } catch (caughtError) {
@@ -39,18 +43,21 @@ export function FoundationStatusButton({
   }
 
   return (
-    <div className="mt-3 grid gap-2">
+    <div className="grid justify-items-end gap-2">
       <Button
         disabled={isPending}
         onClick={() => {
           void updateStatus();
         }}
+        size="sm"
         type="button"
         variant={isSuspended ? "default" : "outline"}
       >
         {isPending ? "Saving..." : isSuspended ? "Restore" : "Suspend"}
       </Button>
-      {error ? <p className="text-xs text-red-700">{error}</p> : null}
+      {error ? (
+        <p className="max-w-48 text-right text-xs text-red-700">{error}</p>
+      ) : null}
     </div>
   );
 }

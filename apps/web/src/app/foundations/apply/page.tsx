@@ -12,18 +12,18 @@ export default async function FoundationApplyPage() {
   const foundation = await trpc.foundations.current();
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] px-5 py-8 text-stone-950 sm:px-8">
+    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
       <section className="mx-auto grid max-w-4xl gap-5">
         <Card className="p-5">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <p className="text-sm font-medium text-stone-500">
+              <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
                 Foundation onboarding
               </p>
               <h1 className="mt-2 text-3xl font-semibold">
                 Trustee review submission
               </h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600">
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-stone-600 dark:text-stone-400">
                 Submit a foundation profile for Trustee review. Approved
                 foundations can publish public donation requests.
               </p>

@@ -36,6 +36,31 @@ This is the execution roadmap for taking Al-Infaaq from the current scaffold to
   of foundation views.
 - Add a deployment runbook covering environment variables, preflight commands,
   webhook setup, privacy checks, and rollback.
+- Add tRPC-owned profile-completion redirects for spender goals and foundation
+  Trustee onboarding from the dashboard.
+- Record audit logs for privileged admin and Trustee actions.
+- Add request lifecycle guardrails covering approved-foundation requirements for
+  public reads, checkout starts, publishing, and banner generation.
+- Extract foundation request management into the required Midday-style table
+  structure under `components/tables/foundation-requests`.
+- Extract Trustee review queue and decisions into the required Midday-style
+  table structure under `components/tables/trustee-reviews`.
+- Extract admin foundations, donation requests, donations/reconciliation, and
+  audit logs into required Midday-style table structures under
+  `components/tables/admin-*`.
+- Extract public request discovery and private wallet donation history into
+  required Midday-style table structures under `components/tables/public-requests`
+  and `components/tables/wallet-donations`.
+- Add workflow-level tRPC tests for Trustee approval, admin suspension, request
+  lifecycle guards, and donation checkout persistence with mocked external
+  boundaries.
+- Fix and test spender access to foundation onboarding submission so new
+  foundation applicants can enter Trustee review.
+- Add payment webhook workflow tests for success/refund idempotency, request
+  raised totals, funded/reopened transitions, and pending-only failures.
+- Default the web shell to dark mode, align auth forms with shared shadcn-style
+  inputs/labels, and add an architecture guardrail for Trustee-reviewed
+  metadata plus the `alinfaaq` domain direction.
 
 ## Phase 1: Better Auth and Access Control
 
@@ -45,9 +70,6 @@ This is the execution roadmap for taking Al-Infaaq from the current scaffold to
 - Enforce permissions in API procedures and protected web routes.
 - Move product mutations and protected reads behind typed tRPC procedures instead
   of Next server actions.
-- Add profile-completion redirects for new users.
-- Record audit logs for privileged actions.
-
 Acceptance:
 
 - Every role can access its own dashboard and is blocked from other roles'
@@ -74,6 +96,9 @@ Acceptance:
 - Build public request pages with request progress and foundation trust status.
 - Build spender request discovery/listing.
 - Store and display aggregate raised totals without exposing spender identities.
+- Keep approved-foundation request lifecycle guards covered by API contract
+  tests.
+- Continue applying the same table structure to any new list-heavy surfaces.
 
 Acceptance:
 
@@ -137,6 +162,8 @@ Acceptance:
   request state transitions, and reminder jobs.
 - Add end-to-end coverage for spender, foundation, Trustee, and admin
   flows.
+- Expand workflow-level tRPC tests beyond source/contract assertions for the
+  remaining high-risk flows.
 - Review privacy, webhook signatures, payment secrets, and role escalation risks.
 - Add deployment, environment variable, rollback, and support documentation.
 - Verify responsive UI, empty states, loading states, and error states.
