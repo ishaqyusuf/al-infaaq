@@ -114,6 +114,7 @@ model SpenderProfile {
   userId             String         @unique
   monthlyGoalKobo    Int            @default(0)
   showSpendingHistory Boolean       @default(false)
+  remindersEnabled   Boolean        @default(true)
   reminderChannel    ReminderChannel @default(EMAIL)
   createdAt          DateTime       @default(now())
   updatedAt          DateTime       @updatedAt

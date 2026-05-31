@@ -7,6 +7,10 @@ type SpenderProfileReminder = {
   userId: string;
 };
 
+type ActiveReminderProfile = {
+  userId: string;
+};
+
 type ReminderRecord = {
   channel: ReminderChannel;
   id: string;
@@ -46,9 +50,13 @@ type ReminderClient = {
   };
   spenderProfile: {
     findMany(args: {
-      select: { reminderChannel: true; userId: true };
-      where: { monthlyGoalKobo: { gt: number } };
-    }): Promise<SpenderProfileReminder[]>;
+      select: { reminderChannel?: true; userId: true };
+      where: {
+        monthlyGoalKobo?: { gt: number };
+        remindersEnabled?: true;
+        userId?: { in: string[] };
+      };
+    }): Promise<Array<ActiveReminderProfile | SpenderProfileReminder>>;
   };
   user: {
     findMany(args: {
@@ -122,7 +130,7 @@ export async function queueMonthlyGivingReminders({
 
   const client = db ?? (await loadReminderClient());
   const scheduledAt = nextMonthlyReminderDate(now);
-  const profiles = await client.spenderProfile.findMany({
+  const profiles = (await client.spenderProfile.findMany({
     select: {
       reminderChannel: true,
       userId: true,
@@ -131,8 +139,9 @@ export async function queueMonthlyGivingReminders({
       monthlyGoalKobo: {
         gt: 0,
       },
+      remindersEnabled: true,
     },
-  });
+  })) as SpenderProfileReminder[];
 
   if (profiles.length === 0) {
     return {
@@ -228,11 +237,33 @@ export async function processDueEmailReminders({
       },
     },
   });
+  const activeProfiles = await client.spenderProfile.findMany({
+    select: {
+      userId: true,
+    },
+    where: {
+      monthlyGoalKobo: {
+        gt: 0,
+      },
+      remindersEnabled: true,
+      userId: {
+        in: reminders.map((reminder) => reminder.userId),
+      },
+    },
+  });
+  const activeUserIds = new Set(
+    activeProfiles.map((profile) => profile.userId),
+  );
   const usersById = new Map(users.map((user) => [user.id, user]));
   const sentReminderIds: string[] = [];
   let skipped = 0;
 
   for (const reminder of reminders) {
+    if (!activeUserIds.has(reminder.userId)) {
+      skipped += 1;
+      continue;
+    }
+
     const user = usersById.get(reminder.userId);
 
     if (!user) {

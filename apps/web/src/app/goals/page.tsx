@@ -1,3 +1,4 @@
+import { buttonVariants } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import Link from "next/link";
@@ -16,7 +17,7 @@ export default async function GoalsPage() {
     goalKobo > 0 ? Math.min(100, (donatedKobo / goalKobo) * 100) : 0;
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
+    <main className="min-h-screen bg-background px-5 py-8 text-foreground sm:px-8">
       <section className="mx-auto grid max-w-5xl gap-5 lg:grid-cols-[0.6fr_0.4fr]">
         <Card className="p-5">
           <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
@@ -32,6 +33,7 @@ export default async function GoalsPage() {
             defaultValues={{
               monthlyGoalNaira: goalKobo ? goalKobo / 100 : "",
               reminderChannel: profile?.reminderChannel ?? "EMAIL",
+              remindersEnabled: profile?.remindersEnabled ?? true,
               showSpendingHistory: profile?.showSpendingHistory ?? false,
             }}
           />
@@ -60,7 +62,10 @@ export default async function GoalsPage() {
             />
           </div>
           <Link
-            className="mt-6 inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-4 text-sm font-semibold"
+            className={buttonVariants({
+              className: "mt-6",
+              variant: "outline",
+            })}
             href="/wallet"
           >
             Open wallet

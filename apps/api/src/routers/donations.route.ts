@@ -1,6 +1,8 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@al-infaaq/db";
 import {
+  assertLemonSqueezyConfigured,
+  assertPaystackConfigured,
   createLemonSqueezyCheckout,
   initializePaystackTransaction,
 } from "@al-infaaq/payments";
@@ -15,6 +17,30 @@ const startDonationInputSchema = z.object({
   provider: z.enum(["paystack", "lemon_squeezy"]).default("paystack"),
   requestId: z.string().min(1),
 });
+
+function assertProviderConfigured(provider: "LEMON_SQUEEZY" | "PAYSTACK") {
+  try {
+    if (provider === "LEMON_SQUEEZY") {
+      assertLemonSqueezyConfigured();
+
+      if (!process.env.LEMONSQUEEZY_DONATION_VARIANT_ID) {
+        throw new Error("LEMONSQUEEZY_DONATION_VARIANT_ID is not configured.");
+      }
+
+      return;
+    }
+
+    assertPaystackConfigured();
+  } catch (caughtError) {
+    throw new TRPCError({
+      code: "PRECONDITION_FAILED",
+      message:
+        caughtError instanceof Error
+          ? caughtError.message
+          : "Payment provider is not configured.",
+    });
+  }
+}
 
 export const donationsRouter = createTRPCRouter({
   wallet: permissionProcedure("donations:read-own").query(async ({ ctx }) => {
@@ -71,6 +97,8 @@ export const donationsRouter = createTRPCRouter({
       const paymentProvider =
         input.provider === "lemon_squeezy" ? "LEMON_SQUEEZY" : "PAYSTACK";
 
+      assertProviderConfigured(paymentProvider);
+
       await prisma.donation.create({
         data: {
           amountKobo,
@@ -85,18 +113,11 @@ export const donationsRouter = createTRPCRouter({
       if (paymentProvider === "LEMON_SQUEEZY") {
         const variantId = process.env.LEMONSQUEEZY_DONATION_VARIANT_ID;
 
-        if (!variantId) {
-          throw new TRPCError({
-            code: "PRECONDITION_FAILED",
-            message: "LEMONSQUEEZY_DONATION_VARIANT_ID is not configured.",
-          });
-        }
-
         const checkout = await createLemonSqueezyCheckout({
           customPrice: amountKobo,
           donationReference: reference,
           email: ctx.auth.session.user.email,
-          variantId,
+          variantId: variantId ?? "",
         });
 
         const checkoutUrl = checkout?.data?.attributes?.url;

@@ -89,7 +89,9 @@ describe("tRPC router contracts", () => {
   test("foundation workspace reports aggregate request performance only", () => {
     const source = readRouter("requests.route.ts");
 
+    expect(source).toContain("impactReport");
     expect(source).toContain("statusCounts");
+    expect(source).toContain("statusTotalsKobo");
     expect(source).toContain("progressPercent");
     expect(source).not.toContain("spender: true");
   });

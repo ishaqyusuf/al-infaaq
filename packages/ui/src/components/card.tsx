@@ -5,7 +5,7 @@ export function Card({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
-        "rounded-xl border border-stone-200/60 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.015)] dark:border-stone-800 dark:bg-stone-950",
+        "rounded-lg border border-stone-200/60 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.015)] dark:border-stone-800 dark:bg-stone-950",
         className,
       )}
       data-slot="card"
@@ -21,7 +21,7 @@ export function PremiumCard({
   return (
     <div
       className={cn(
-        "relative rounded-xl border border-stone-200/60 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all duration-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:border-stone-800 dark:bg-stone-950",
+        "relative rounded-lg border border-stone-200/60 bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)] transition-all duration-200 hover:shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:border-stone-800 dark:bg-stone-950",
         className,
       )}
       data-slot="premium-card"

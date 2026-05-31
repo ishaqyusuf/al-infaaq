@@ -1,3 +1,4 @@
+import { buttonVariants } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -24,7 +25,7 @@ export default async function BannerPreviewPage({
   const latestBanner = request.banners[0] ?? null;
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
+    <main className="min-h-screen bg-background px-5 py-8 text-foreground sm:px-8">
       <section className="mx-auto grid max-w-5xl gap-5">
         <Card className="p-5">
           <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
@@ -50,14 +51,14 @@ export default async function BannerPreviewPage({
             />
             <div className="mt-4 flex flex-wrap gap-3">
               <a
-                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-4 text-sm font-semibold"
+                className={buttonVariants({ variant: "outline" })}
                 download={`alinfaaq-${request.id}-banner.svg`}
                 href={`/api/requests/${request.id}/banner`}
               >
                 Download banner
               </a>
               <a
-                className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-4 text-sm font-semibold"
+                className={buttonVariants({ variant: "outline" })}
                 href={`/requests/${request.id}`}
               >
                 Open request

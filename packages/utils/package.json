@@ -12,6 +12,7 @@
   "scripts": {
     "build": "tsc --noEmit",
     "lint": "biome check .",
+    "test": "bun test",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

@@ -2,7 +2,7 @@ import { Card } from "@al-infaaq/ui/card";
 
 export default function Loading() {
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
+    <main className="min-h-screen bg-background px-5 py-8 text-foreground sm:px-8">
       <section className="mx-auto grid max-w-5xl gap-5">
         <Card className="p-5">
           <div className="h-4 w-28 rounded-md bg-stone-200 dark:bg-stone-800" />

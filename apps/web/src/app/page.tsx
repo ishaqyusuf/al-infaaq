@@ -1,46 +1,32 @@
 import { Badge } from "@al-infaaq/ui/badge";
-import { Button } from "@al-infaaq/ui/button";
-import { Card, PremiumCard } from "@al-infaaq/ui/card";
+import { buttonVariants } from "@al-infaaq/ui/button";
+import { PremiumCard } from "@al-infaaq/ui/card";
 import {
   ArrowRight,
   BadgeCheck,
-  Bell,
-  Building2,
   EyeOff,
-  FileCheck2,
-  Goal,
   HeartHandshake,
-  QrCode,
   ShieldCheck,
   Sparkles,
   WalletCards,
 } from "lucide-react";
 import Link from "next/link";
 
-const donationRequests = [
+const workflowLinks = [
   {
-    accent: "bg-emerald-500",
-    foundation: "Baytul Khayr Foundation",
-    progress: "60%",
-    raised: "NGN 2.4m",
-    target: "NGN 4m",
-    title: "Ramadan food baskets",
+    description: "Browse Trustee-reviewed requests and give anonymously.",
+    href: "/requests",
+    title: "Donate",
   },
   {
-    accent: "bg-sky-500",
-    foundation: "Ansar Relief Trust",
-    progress: "73%",
-    raised: "NGN 880k",
-    target: "NGN 1.2m",
-    title: "Masjid borehole repair",
+    description: "Submit a foundation profile for Trustee review.",
+    href: "/foundations/apply",
+    title: "Apply",
   },
   {
-    accent: "bg-amber-500",
-    foundation: "Amanah Care",
-    progress: "57%",
-    raised: "NGN 510k",
-    target: "NGN 900k",
-    title: "Widow rent support",
+    description: "Manage published requests and fundraising banners.",
+    href: "/foundation/requests",
+    title: "Publish",
   },
 ];
 
@@ -66,7 +52,7 @@ const providerStatus = [
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] text-stone-950 dark:text-stone-50">
+    <main className="min-h-screen bg-background text-foreground">
       <section className="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
         <div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-5 sm:px-8 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex items-center gap-3">
@@ -87,21 +73,18 @@ export default function Home() {
               </Badge>
             ))}
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-3 text-sm font-semibold hover:bg-stone-50 dark:bg-stone-900"
+              className={buttonVariants({ size: "sm", variant: "outline" })}
               href="/requests"
             >
               Browse requests
             </Link>
             <Link
-              className="inline-flex h-10 items-center justify-center rounded-md border border-stone-300 dark:border-stone-700 px-3 text-sm font-semibold hover:bg-stone-50 dark:bg-stone-900"
+              className={buttonVariants({ size: "sm", variant: "outline" })}
               href="/sign-in"
             >
               Sign in
             </Link>
-            <Link
-              className="inline-flex h-10 items-center justify-center rounded-md bg-stone-950 px-3 text-sm font-semibold text-white hover:bg-stone-800"
-              href="/sign-up"
-            >
+            <Link className={buttonVariants({ size: "sm" })} href="/sign-up">
               Create account
             </Link>
           </div>
@@ -112,7 +95,7 @@ export default function Home() {
         <PremiumCard className="p-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
             <div className="max-w-2xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1 text-xs font-semibold text-emerald-950 dark:text-emerald-300 border border-emerald-250/20">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1 text-xs font-semibold text-emerald-950 dark:text-emerald-300 border border-emerald-200/20">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
@@ -121,7 +104,7 @@ export default function Home() {
                   aria-hidden="true"
                   className="size-3.5 text-emerald-700 dark:text-emerald-500"
                 />
-                Kitaab and Sunnah aligned giving
+                Trustee-reviewed foundations
               </div>
               <h1 className="text-3xl font-bold leading-tight tracking-tight sm:text-5xl dark:text-stone-50">
                 Spend quietly. Verify carefully. Move sadaqah faster.
@@ -132,23 +115,29 @@ export default function Home() {
                 approve foundations before they receive public donations.
               </p>
             </div>
-            <div className="grid min-w-64 gap-3 rounded-xl border border-stone-200 dark:border-stone-800/50 bg-[#fbfaf7] dark:bg-stone-900/40 p-5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
-                  Monthly goal
-                </span>
-                <Goal
-                  aria-hidden="true"
-                  className="size-5 text-emerald-700 dark:text-emerald-500"
-                />
-              </div>
-              <p className="text-3xl font-bold tracking-tight">NGN 75,000</p>
-              <div className="h-1.5 rounded-full bg-stone-200/80 dark:bg-stone-800">
-                <div className="h-1.5 w-[68%] rounded-full bg-emerald-600" />
-              </div>
-              <p className="text-xs font-medium text-stone-550 dark:text-stone-450">
-                NGN 51,000 recorded this month
+            <div className="grid min-w-64 gap-3 rounded-lg border border-stone-200 dark:border-stone-800/50 bg-white/70 dark:bg-stone-900/40 p-5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-stone-500 dark:text-stone-400">
+                Start here
               </p>
+              <Link
+                className={buttonVariants({ variant: "secondary" })}
+                href="/requests"
+              >
+                Browse requests
+                <ArrowRight aria-hidden="true" className="size-4" />
+              </Link>
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href="/goals"
+              >
+                Set giving goal
+              </Link>
+              <Link
+                className={buttonVariants({ variant: "outline" })}
+                href="/foundations/apply"
+              >
+                Submit foundation
+              </Link>
             </div>
           </div>
         </PremiumCard>
@@ -176,14 +165,16 @@ export default function Home() {
               and fraud protection.
             </p>
           </div>
-          <Button
-            className="mt-6 w-full sm:w-auto"
-            variant="secondary"
-            type="button"
+          <Link
+            className={buttonVariants({
+              className: "mt-6 w-full sm:w-auto",
+              variant: "secondary",
+            })}
+            href="/wallet"
           >
             <WalletCards aria-hidden="true" className="size-4" />
             Open giving wallet
-          </Button>
+          </Link>
         </PremiumCard>
       </section>
 
@@ -206,7 +197,7 @@ export default function Home() {
           <div className="grid gap-3">
             {verificationQueue.map((item, index) => (
               <div
-                className="flex items-center gap-3 rounded-xl border border-stone-200 dark:border-stone-800/50 p-3.5 transition-colors hover:bg-stone-50 dark:bg-stone-900/50 dark:hover:bg-stone-900/30"
+                className="flex items-center gap-3 rounded-lg border border-stone-200 dark:border-stone-800/50 p-3.5 transition-colors hover:bg-stone-50 dark:bg-stone-900/50 dark:hover:bg-stone-900/30"
                 key={item}
               >
                 <div className="grid size-8 place-items-center rounded-lg bg-sky-50 text-sm font-semibold text-sky-900 dark:bg-sky-950/45 dark:text-sky-300">
@@ -224,114 +215,49 @@ export default function Home() {
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-xs font-semibold tracking-wider text-stone-500 dark:text-stone-400 uppercase">
-                Live requests
+                Working surfaces
               </p>
               <h2 className="text-2xl font-bold tracking-tight">
                 Foundation spending needs
               </h2>
             </div>
-            <Button type="button" variant="outline" size="sm">
+            <Link
+              className={buttonVariants({ size: "sm", variant: "outline" })}
+              href="/foundation/requests"
+            >
               <Sparkles
                 aria-hidden="true"
-                className="size-4 text-emerald-600 dark:text-emerald-450"
+                className="size-4 text-emerald-600 dark:text-emerald-400"
               />
               Generate banner
-            </Button>
+            </Link>
           </div>
           <div className="grid gap-4 lg:grid-cols-3">
-            {donationRequests.map((request) => (
-              <article
-                className="interactive-card rounded-xl border border-stone-200 dark:border-stone-800/60 bg-white dark:bg-stone-900/30 p-4 flex flex-col justify-between"
-                key={request.title}
+            {workflowLinks.map((workflow) => (
+              <Link
+                className="interactive-card rounded-lg border border-stone-200 dark:border-stone-800/60 bg-white dark:bg-stone-900/30 p-4"
+                href={workflow.href}
+                key={workflow.title}
               >
-                <div>
-                  <div className={`mb-4 h-1 rounded-full ${request.accent}`} />
-                  <h3 className="text-base font-semibold tracking-tight leading-snug">
-                    {request.title}
-                  </h3>
-                  <p className="mt-1 text-xs text-stone-500 dark:text-stone-400">
-                    {request.foundation}
-                  </p>
-                </div>
-                <div>
-                  <div className="mt-5 flex items-end justify-between gap-3">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-stone-400">
-                        Raised
-                      </p>
-                      <p className="text-lg font-bold tracking-tight tabular-nums">
-                        {request.raised}
-                      </p>
-                    </div>
-                    <p className="text-xs text-stone-500 dark:text-stone-400">
-                      of {request.target}
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-base font-semibold tracking-tight leading-snug">
+                      {workflow.title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-6 text-stone-600 dark:text-stone-400">
+                      {workflow.description}
                     </p>
                   </div>
-                  <div className="mt-3 h-1.5 rounded-full bg-stone-100 dark:bg-stone-900 dark:bg-stone-800">
-                    <div
-                      className={`h-1.5 rounded-full ${request.accent}`}
-                      style={{ width: request.progress }}
-                    />
-                  </div>
-                  <div className="mt-5 flex gap-2">
-                    <Button
-                      aria-label="Open QR code"
-                      size="icon"
-                      type="button"
-                      variant="outline"
-                      className="size-9 rounded-lg"
-                    >
-                      <QrCode aria-hidden="true" className="size-4" />
-                    </Button>
-                    <Button
-                      className="h-9 flex-1 text-xs"
-                      type="button"
-                      variant="secondary"
-                    >
-                      Donate{" "}
-                      <ArrowRight aria-hidden="true" className="size-3.5" />
-                    </Button>
-                  </div>
+                  <ArrowRight
+                    aria-hidden="true"
+                    className="mt-1 size-4 text-emerald-700 dark:text-emerald-500"
+                  />
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
         </PremiumCard>
       </section>
-
-      <section className="border-y border-stone-200 dark:border-stone-800/60 bg-white dark:bg-stone-950/50">
-        <div className="mx-auto grid max-w-7xl gap-5 px-5 py-8 sm:px-8 grid-cols-2 lg:grid-cols-4">
-          <Metric icon={Building2} label="Verified foundations" value="24" />
-          <Metric icon={FileCheck2} label="Pending Trustee reviews" value="7" />
-          <Metric icon={Bell} label="Monthly reminders queued" value="183" />
-          <Metric icon={QrCode} label="Generated request banners" value="56" />
-        </div>
-      </section>
     </main>
-  );
-}
-
-function Metric({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: React.ComponentType<{ className?: string; "aria-hidden"?: boolean }>;
-  label: string;
-  value: string;
-}) {
-  return (
-    <Card className="bg-[#fbfaf6] dark:bg-stone-900/20 border-stone-200 dark:border-stone-800/40 p-4 transition-all hover:border-stone-200 dark:border-stone-800/80">
-      <div className="flex items-center justify-between gap-4">
-        <p className="text-xs font-semibold tracking-wider text-stone-500 uppercase dark:text-stone-400">
-          {label}
-        </p>
-        <Icon
-          aria-hidden={true}
-          className="size-5 text-emerald-700 dark:text-emerald-500"
-        />
-      </div>
-      <p className="mt-4 text-3xl font-bold tracking-tight">{value}</p>
-    </Card>
   );
 }

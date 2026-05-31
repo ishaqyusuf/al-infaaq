@@ -1,4 +1,5 @@
 import { Badge } from "@al-infaaq/ui/badge";
+import { buttonVariants } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import {
   Building2,
@@ -24,7 +25,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] text-stone-950 dark:text-stone-50">
+    <main className="min-h-screen bg-background text-foreground">
       <section className="border-b border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-5 py-5 sm:px-8 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-3">
@@ -87,7 +88,7 @@ export default async function DashboardPage() {
                 {nextAction.summary}
               </p>
               <Link
-                className="mt-5 inline-flex h-10 items-center justify-center rounded-md bg-stone-950 px-4 text-sm font-semibold text-white"
+                className={buttonVariants({ className: "mt-5" })}
                 href={nextAction.href}
               >
                 Open

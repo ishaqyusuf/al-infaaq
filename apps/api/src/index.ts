@@ -1,4 +1,5 @@
 import { auth } from "@al-infaaq/auth";
+import { resolveAppUrl } from "@al-infaaq/utils";
 import { serve } from "@hono/node-server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { Hono } from "hono";
@@ -8,7 +9,7 @@ import { buildRequestContext, createTRPCContext } from "./context";
 import { appRouter } from "./routers/_app";
 
 const app = new Hono();
-const webOrigin = process.env.WEB_APP_URL ?? "http://localhost:3000";
+const webOrigin = resolveAppUrl();
 
 app.use(
   "/api/auth/*",

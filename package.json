@@ -22,10 +22,12 @@
     "lint": "turbo lint",
     "roles:provision": "node ./scripts/with-workspace-env.mjs bun run scripts/provision-roles.ts",
     "test": "turbo test",
+    "test:e2e": "node ./scripts/with-workspace-env.mjs bun run db:up && node ./scripts/with-workspace-env.mjs bun run db:migrate:deploy && node ./scripts/with-workspace-env.mjs bun run build && node ./scripts/with-workspace-env.mjs playwright test",
     "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.3.0",
+    "@playwright/test": "^1.60.0",
     "@types/bun": "^1.3.14",
     "turbo": "^2.5.0",
     "typescript": "^5.9.0"

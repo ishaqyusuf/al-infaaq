@@ -52,6 +52,7 @@ bun install
 bun run db:generate
 bun run db:migrate:deploy
 bun run test
+bun run test:e2e
 bun run lint
 bun run typecheck
 bun run build
@@ -60,6 +61,14 @@ bun run build
 Run `db:migrate:deploy` before routing traffic to the new build. DB-backed App
 Router pages are marked dynamic so `next build` does not prerender live donation
 request data, but runtime requests still require the Prisma tables to exist.
+
+`bun run test:e2e` starts the local payment provider harness, API, web runtime,
+and Docker Postgres-backed production build. It must pass public runtime,
+mobile/desktop responsive layout, Better Auth role onboarding, Trustee review,
+request publishing, QR-backed banner generation, Paystack callback completion,
+Lemon Squeezy signed-webhook completion, private wallet history, admin
+trust-operations reporting, privacy-safe foundation impact reports, and
+protected-route denial checks before deployment.
 
 The migration SQL was normalized before production launch to use Trustee
 language from the first migration. Fresh deployment databases can apply the
@@ -76,6 +85,9 @@ Configure provider dashboards with production webhook URLs:
 
 Provider checkout initialization must continue through `donations.start`; do not
 add raw provider initialization routes that bypass pending donation persistence.
+Paystack callback settings should return to `/donations/complete`; Lemon Squeezy
+completion is webhook-driven, so the signed `order_created` webhook is the
+authoritative success signal.
 
 ## Role Provisioning
 

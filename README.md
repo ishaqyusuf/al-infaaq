@@ -6,9 +6,9 @@ Anonymous sadaqah giving for Trustee-reviewed foundations.
 
 Al-Infaaq is an in-progress Bun + Turbo monorepo for building a private giving
 platform. Al-Muhsinoon can set monthly sadaqah goals, donate without public
-recognition, and keep a private giving wallet. Foundations can publish verified
-needs, generate QR-backed fundraising banners, and collect donations only after
-Trustee review.
+recognition, and keep a private giving wallet. Trustee-reviewed foundations can
+publish needs, generate QR-backed fundraising banners, and collect donations
+only after Trustee review.
 
 Domain direction: `alinfaaq` for the public web presence. The final TLD is still
 to be confirmed before launch.
@@ -105,7 +105,7 @@ Copy `.env.example` to `.env.local` for local development.
 | Group | Variables |
 | --- | --- |
 | App origins | `NEXT_PUBLIC_APP_URL`, `NEXT_PUBLIC_API_URL`, `WEB_APP_URL`, `API_ORIGIN`, `API_PORT` |
-| Auth | `BETTER_AUTH_SECRET`, `AL_INFAAQ_ADMIN_EMAILS`, `AL_INFAAQ_TRUSTEE_EMAILS` |
+| Auth | `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, `AL_INFAAQ_ADMIN_EMAILS`, `AL_INFAAQ_TRUSTEE_EMAILS` |
 | Database | `DATABASE_PROVIDER`, `DATABASE_URL` |
 | Paystack | `PAYSTACK_PUBLIC_KEY`, `PAYSTACK_SECRET_KEY`, `PAYSTACK_WEBHOOK_SECRET` |
 | Lemon Squeezy | `LEMONSQUEEZY_API_KEY`, `LEMONSQUEEZY_DONATION_VARIANT_ID`, `LEMONSQUEEZY_STORE_ID`, `LEMONSQUEEZY_WEBHOOK_SECRET` |
@@ -123,6 +123,7 @@ must use real provider secrets before payment testing.
 | `bun run typecheck` | Typecheck all workspaces. |
 | `bun run lint` | Lint all workspaces. |
 | `bun run test` | Run Bun tests across workspaces through Turbo. |
+| `bun run test:e2e` | Run Playwright production-mode checks for public pages, role journeys, core form mutations, Trustee approval, request publishing, banner generation, anonymous Paystack checkout, admin trust operations, and privacy-safe request impact reports against Docker Postgres. |
 | `bun run build` | Build all workspaces. |
 | `bun run roles:provision` | Promote existing Better Auth users to admin or Trustee from environment email lists. |
 | `bun run db:up` | Start the local Docker Postgres service. |
@@ -141,6 +142,7 @@ Run these before shipping a change:
 bun run db:generate
 bun run db:migrate
 bun run test
+bun run test:e2e
 bun run typecheck
 bun run lint
 bun run build

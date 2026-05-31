@@ -20,6 +20,15 @@ const requestIdInputSchema = z.object({
   requestId: z.string().min(1),
 });
 
+function emptyStatusCounts() {
+  return {
+    FAILED: 0,
+    PENDING: 0,
+    REFUNDED: 0,
+    SUCCEEDED: 0,
+  };
+}
+
 function escapeSvgText(value: string) {
   return value
     .replaceAll("&", "&amp;")
@@ -123,12 +132,7 @@ export const requestsRouter = createTRPCRouter({
         const groups = donationGroups.filter(
           (group) => group.donationRequestId === request.id,
         );
-        const statusCounts = {
-          FAILED: 0,
-          PENDING: 0,
-          REFUNDED: 0,
-          SUCCEEDED: 0,
-        };
+        const statusCounts = emptyStatusCounts();
         const succeededGroup = groups.find(
           (group) => group.status === "SUCCEEDED",
         );
@@ -158,6 +162,66 @@ export const requestsRouter = createTRPCRouter({
       };
     },
   ),
+  impactReport: permissionProcedure("requests:create")
+    .input(requestIdInputSchema)
+    .query(async ({ ctx, input }) => {
+      const request = await prisma.donationRequest.findUnique({
+        include: {
+          _count: {
+            select: {
+              banners: true,
+            },
+          },
+          foundation: true,
+        },
+        where: {
+          id: input.requestId,
+        },
+      });
+
+      if (!request) {
+        return null;
+      }
+
+      if (
+        ctx.auth.session.user.role !== "admin" &&
+        request.foundation.userId !== ctx.auth.session.user.id
+      ) {
+        return null;
+      }
+
+      const donationGroups = await prisma.donation.groupBy({
+        _count: { _all: true },
+        _sum: { amountKobo: true },
+        by: ["status"],
+        where: {
+          donationRequestId: request.id,
+          foundationId: request.foundationId,
+        },
+      });
+      const statusCounts = emptyStatusCounts();
+      const statusTotalsKobo = emptyStatusCounts();
+
+      for (const group of donationGroups) {
+        statusCounts[group.status] = group._count._all;
+        statusTotalsKobo[group.status] = group._sum.amountKobo ?? 0;
+      }
+
+      return {
+        bannerCount: request._count.banners,
+        foundation: request.foundation,
+        progressPercent:
+          request.targetKobo > 0
+            ? Math.min(100, (request.raisedKobo / request.targetKobo) * 100)
+            : 0,
+        remainingKobo: Math.max(0, request.targetKobo - request.raisedKobo),
+        request,
+        statusCounts,
+        statusTotalsKobo,
+        successfulDonationCount: statusCounts.SUCCEEDED,
+        successfulKobo: statusTotalsKobo.SUCCEEDED,
+      };
+    }),
   publicDetail: publicProcedure
     .input(requestIdInputSchema)
     .query(({ input }) => {

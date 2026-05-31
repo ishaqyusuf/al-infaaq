@@ -1,4 +1,5 @@
 import { Badge } from "@al-infaaq/ui/badge";
+import { buttonVariants } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import Link from "next/link";
 import { FoundationRequestsDataTable } from "@/components/tables/foundation-requests/data-table";
@@ -16,7 +17,7 @@ export default async function FoundationRequestsPage() {
   const canCreate = foundation?.status === "APPROVED";
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
+    <main className="min-h-screen bg-background px-5 py-8 text-foreground sm:px-8">
       <section className="mx-auto grid max-w-5xl gap-5">
         <Card className="p-5">
           <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
@@ -36,7 +37,7 @@ export default async function FoundationRequestsPage() {
               Complete foundation onboarding before creating requests.
             </p>
             <Link
-              className="mt-4 inline-flex h-10 items-center justify-center rounded-md bg-stone-950 px-4 text-sm font-semibold text-white"
+              className={buttonVariants({ className: "mt-4" })}
               href="/foundations/apply"
             >
               Start onboarding

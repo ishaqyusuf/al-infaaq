@@ -6,6 +6,8 @@ import { createTRPCRouter, permissionProcedure } from "../lib.trpc";
 const foundationIdInputSchema = z.object({
   foundationId: z.string().min(1),
 });
+const stalePendingCutoffMs = 30 * 60 * 1000;
+const highValueReviewThresholdKobo = 1_000_000;
 
 async function setFoundationStatus({
   actorId,
@@ -41,6 +43,7 @@ async function setFoundationStatus({
 
 export const adminRouter = createTRPCRouter({
   dashboard: permissionProcedure("admin:manage").query(async () => {
+    const stalePendingCutoff = new Date(Date.now() - stalePendingCutoffMs);
     const [
       users,
       foundations,
@@ -51,6 +54,11 @@ export const adminRouter = createTRPCRouter({
       providerSucceededGroups,
       reconciliationItems,
       totalSucceeded,
+      payoutFoundations,
+      payoutGroups,
+      stalePendingDonations,
+      highValueDonations,
+      suspendedFoundations,
     ] = await Promise.all([
       prisma.user.findMany({
         orderBy: { createdAt: "desc" },
@@ -107,6 +115,66 @@ export const adminRouter = createTRPCRouter({
           status: "SUCCEEDED",
         },
       }),
+      prisma.foundation.findMany({
+        orderBy: { updatedAt: "desc" },
+        select: {
+          id: true,
+          name: true,
+          status: true,
+        },
+        take: 20,
+        where: {
+          status: "APPROVED",
+        },
+      }),
+      prisma.donation.groupBy({
+        _count: { _all: true },
+        _sum: { amountKobo: true },
+        by: ["foundationId", "status"],
+        where: {
+          status: {
+            in: ["SUCCEEDED", "PENDING", "FAILED", "REFUNDED"],
+          },
+        },
+      }),
+      prisma.donation.findMany({
+        include: {
+          donationRequest: true,
+          foundation: true,
+        },
+        orderBy: { createdAt: "asc" },
+        take: 12,
+        where: {
+          createdAt: {
+            lt: stalePendingCutoff,
+          },
+          status: "PENDING",
+        },
+      }),
+      prisma.donation.findMany({
+        include: {
+          donationRequest: true,
+          foundation: true,
+        },
+        orderBy: { amountKobo: "desc" },
+        take: 12,
+        where: {
+          amountKobo: {
+            gte: highValueReviewThresholdKobo,
+          },
+          status: "SUCCEEDED",
+        },
+      }),
+      prisma.foundation.findMany({
+        include: {
+          user: true,
+        },
+        orderBy: { updatedAt: "desc" },
+        take: 12,
+        where: {
+          status: "SUSPENDED",
+        },
+      }),
     ]);
 
     const donationStatusCounts = {
@@ -138,14 +206,85 @@ export const adminRouter = createTRPCRouter({
       };
     }
 
+    const payoutReadiness = payoutFoundations.map((foundation) => {
+      const groups = payoutGroups.filter(
+        (group) => group.foundationId === foundation.id,
+      );
+      const succeededGroup = groups.find(
+        (group) => group.status === "SUCCEEDED",
+      );
+      const pendingGroup = groups.find((group) => group.status === "PENDING");
+      const failedGroup = groups.find((group) => group.status === "FAILED");
+      const refundedGroup = groups.find((group) => group.status === "REFUNDED");
+      const succeededKobo = succeededGroup?._sum.amountKobo ?? 0;
+      const pendingCount = pendingGroup?._count._all ?? 0;
+      const failedCount = failedGroup?._count._all ?? 0;
+
+      return {
+        failedCount,
+        foundation,
+        pendingCount,
+        ready: succeededKobo > 0 && pendingCount === 0 && failedCount === 0,
+        refundedKobo: refundedGroup?._sum.amountKobo ?? 0,
+        succeededCount: succeededGroup?._count._all ?? 0,
+        succeededKobo,
+      };
+    });
+    const failedOrRefundedItems = reconciliationItems.filter((donation) =>
+      ["FAILED", "REFUNDED"].includes(donation.status),
+    );
+    const incidentReviewItems = [
+      ...suspendedFoundations.map((foundation) => ({
+        id: `foundation:${foundation.id}`,
+        label: foundation.name,
+        reason: "Foundation suspended",
+        severity: "high" as const,
+        target: foundation.id,
+        type: "FOUNDATION" as const,
+      })),
+      ...failedOrRefundedItems.slice(0, 6).map((donation) => ({
+        id: `donation:${donation.id}`,
+        label: donation.foundation.name,
+        reason:
+          donation.status === "FAILED"
+            ? "Failed payment needs support review"
+            : "Refunded gift needs reconciliation review",
+        severity: "medium" as const,
+        target: donation.id,
+        type: "PAYMENT" as const,
+      })),
+      ...stalePendingDonations.slice(0, 6).map((donation) => ({
+        id: `pending:${donation.id}`,
+        label: donation.foundation.name,
+        reason: "Stale pending payment",
+        severity: "medium" as const,
+        target: donation.id,
+        type: "PAYMENT" as const,
+      })),
+      ...highValueDonations.slice(0, 6).map((donation) => ({
+        id: `high-value:${donation.id}`,
+        label: donation.foundation.name,
+        reason: "High-value successful gift",
+        severity: "low" as const,
+        target: donation.id,
+        type: "PAYMENT" as const,
+      })),
+    ].slice(0, 12);
+
     return {
       auditLogs,
       donations,
       donationStatusCounts,
       foundations,
+      highValueDonations,
+      highValueReviewThresholdKobo,
+      incidentReviewItems,
+      payoutReadiness,
       providerTotals,
       reconciliationItems,
       requests,
+      stalePendingCutoff,
+      stalePendingDonations,
       totalSucceededKobo: totalSucceeded._sum.amountKobo ?? 0,
       users,
     };

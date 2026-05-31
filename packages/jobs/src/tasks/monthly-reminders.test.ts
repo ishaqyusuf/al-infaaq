@@ -25,6 +25,8 @@ function createReminderClient({
 }: {
   profiles?: Array<{
     reminderChannel: "EMAIL" | "SMS" | "WHATSAPP";
+    remindersEnabled?: boolean;
+    monthlyGoalKobo?: number;
     userId: string;
   }>;
   reminders?: ReminderRow[];
@@ -101,8 +103,31 @@ function createReminderClient({
         },
       },
       spenderProfile: {
-        async findMany() {
-          return profiles;
+        async findMany(args) {
+          return profiles.filter((profile) => {
+            if (
+              args.where.remindersEnabled &&
+              profile.remindersEnabled === false
+            ) {
+              return false;
+            }
+
+            if (
+              args.where.monthlyGoalKobo?.gt !== undefined &&
+              (profile.monthlyGoalKobo ?? 1) <= args.where.monthlyGoalKobo.gt
+            ) {
+              return false;
+            }
+
+            if (
+              args.where.userId?.in &&
+              !args.where.userId.in.includes(profile.userId)
+            ) {
+              return false;
+            }
+
+            return true;
+          });
         },
       },
       user: {
@@ -122,6 +147,11 @@ describe("monthly reminder jobs", () => {
       profiles: [
         { reminderChannel: "EMAIL", userId: "user_1" },
         { reminderChannel: "SMS", userId: "user_2" },
+        {
+          reminderChannel: "EMAIL",
+          remindersEnabled: false,
+          userId: "user_3",
+        },
       ],
       reminders: [
         {
@@ -162,10 +192,25 @@ describe("monthly reminder jobs", () => {
         },
         {
           channel: "EMAIL",
+          id: "reminder_disabled",
+          scheduledAt: new Date("2026-05-25T08:15:00.000Z"),
+          sentAt: null,
+          userId: "user_disabled",
+        },
+        {
+          channel: "EMAIL",
           id: "reminder_2",
           scheduledAt: new Date("2026-05-25T08:30:00.000Z"),
           sentAt: null,
           userId: "missing_user",
+        },
+      ],
+      profiles: [
+        { reminderChannel: "EMAIL", userId: "user_1" },
+        {
+          reminderChannel: "EMAIL",
+          remindersEnabled: false,
+          userId: "user_disabled",
         },
       ],
       users: [{ email: "donor@example.com", id: "user_1", name: "Donor" }],
@@ -182,11 +227,12 @@ describe("monthly reminder jobs", () => {
 
     expect(result).toEqual({
       sent: 1,
-      skipped: 1,
+      skipped: 2,
       status: "ready",
     });
     expect(sentTo).toEqual(["donor@example.com"]);
     expect(reminders[0]?.sentAt).toEqual(now);
     expect(reminders[1]?.sentAt).toBeNull();
+    expect(reminders[2]?.sentAt).toBeNull();
   });
 });

@@ -39,6 +39,7 @@ export type SpenderProfileMinAggregateOutputType = {
   userId: string | null
   monthlyGoalKobo: number | null
   showSpendingHistory: boolean | null
+  remindersEnabled: boolean | null
   reminderChannel: $Enums.ReminderChannel | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -49,6 +50,7 @@ export type SpenderProfileMaxAggregateOutputType = {
   userId: string | null
   monthlyGoalKobo: number | null
   showSpendingHistory: boolean | null
+  remindersEnabled: boolean | null
   reminderChannel: $Enums.ReminderChannel | null
   createdAt: Date | null
   updatedAt: Date | null
@@ -59,6 +61,7 @@ export type SpenderProfileCountAggregateOutputType = {
   userId: number
   monthlyGoalKobo: number
   showSpendingHistory: number
+  remindersEnabled: number
   reminderChannel: number
   createdAt: number
   updatedAt: number
@@ -79,6 +82,7 @@ export type SpenderProfileMinAggregateInputType = {
   userId?: true
   monthlyGoalKobo?: true
   showSpendingHistory?: true
+  remindersEnabled?: true
   reminderChannel?: true
   createdAt?: true
   updatedAt?: true
@@ -89,6 +93,7 @@ export type SpenderProfileMaxAggregateInputType = {
   userId?: true
   monthlyGoalKobo?: true
   showSpendingHistory?: true
+  remindersEnabled?: true
   reminderChannel?: true
   createdAt?: true
   updatedAt?: true
@@ -99,6 +104,7 @@ export type SpenderProfileCountAggregateInputType = {
   userId?: true
   monthlyGoalKobo?: true
   showSpendingHistory?: true
+  remindersEnabled?: true
   reminderChannel?: true
   createdAt?: true
   updatedAt?: true
@@ -196,6 +202,7 @@ export type SpenderProfileGroupByOutputType = {
   userId: string
   monthlyGoalKobo: number
   showSpendingHistory: boolean
+  remindersEnabled: boolean
   reminderChannel: $Enums.ReminderChannel
   createdAt: Date
   updatedAt: Date
@@ -229,6 +236,7 @@ export type SpenderProfileWhereInput = {
   userId?: Prisma.StringFilter<"SpenderProfile"> | string
   monthlyGoalKobo?: Prisma.IntFilter<"SpenderProfile"> | number
   showSpendingHistory?: Prisma.BoolFilter<"SpenderProfile"> | boolean
+  remindersEnabled?: Prisma.BoolFilter<"SpenderProfile"> | boolean
   reminderChannel?: Prisma.EnumReminderChannelFilter<"SpenderProfile"> | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFilter<"SpenderProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SpenderProfile"> | Date | string
@@ -241,6 +249,7 @@ export type SpenderProfileOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   monthlyGoalKobo?: Prisma.SortOrder
   showSpendingHistory?: Prisma.SortOrder
+  remindersEnabled?: Prisma.SortOrder
   reminderChannel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -256,6 +265,7 @@ export type SpenderProfileWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.SpenderProfileWhereInput | Prisma.SpenderProfileWhereInput[]
   monthlyGoalKobo?: Prisma.IntFilter<"SpenderProfile"> | number
   showSpendingHistory?: Prisma.BoolFilter<"SpenderProfile"> | boolean
+  remindersEnabled?: Prisma.BoolFilter<"SpenderProfile"> | boolean
   reminderChannel?: Prisma.EnumReminderChannelFilter<"SpenderProfile"> | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFilter<"SpenderProfile"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"SpenderProfile"> | Date | string
@@ -268,6 +278,7 @@ export type SpenderProfileOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   monthlyGoalKobo?: Prisma.SortOrder
   showSpendingHistory?: Prisma.SortOrder
+  remindersEnabled?: Prisma.SortOrder
   reminderChannel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -286,6 +297,7 @@ export type SpenderProfileScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"SpenderProfile"> | string
   monthlyGoalKobo?: Prisma.IntWithAggregatesFilter<"SpenderProfile"> | number
   showSpendingHistory?: Prisma.BoolWithAggregatesFilter<"SpenderProfile"> | boolean
+  remindersEnabled?: Prisma.BoolWithAggregatesFilter<"SpenderProfile"> | boolean
   reminderChannel?: Prisma.EnumReminderChannelWithAggregatesFilter<"SpenderProfile"> | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"SpenderProfile"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"SpenderProfile"> | Date | string
@@ -295,6 +307,7 @@ export type SpenderProfileCreateInput = {
   id?: string
   monthlyGoalKobo?: number
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: $Enums.ReminderChannel
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -307,6 +320,7 @@ export type SpenderProfileUncheckedCreateInput = {
   userId: string
   monthlyGoalKobo?: number
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: $Enums.ReminderChannel
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -317,6 +331,7 @@ export type SpenderProfileUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -329,6 +344,7 @@ export type SpenderProfileUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -340,6 +356,7 @@ export type SpenderProfileCreateManyInput = {
   userId: string
   monthlyGoalKobo?: number
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: $Enums.ReminderChannel
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -349,6 +366,7 @@ export type SpenderProfileUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -359,6 +377,7 @@ export type SpenderProfileUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -374,6 +393,7 @@ export type SpenderProfileCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   monthlyGoalKobo?: Prisma.SortOrder
   showSpendingHistory?: Prisma.SortOrder
+  remindersEnabled?: Prisma.SortOrder
   reminderChannel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -388,6 +408,7 @@ export type SpenderProfileMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   monthlyGoalKobo?: Prisma.SortOrder
   showSpendingHistory?: Prisma.SortOrder
+  remindersEnabled?: Prisma.SortOrder
   reminderChannel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -398,6 +419,7 @@ export type SpenderProfileMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   monthlyGoalKobo?: Prisma.SortOrder
   showSpendingHistory?: Prisma.SortOrder
+  remindersEnabled?: Prisma.SortOrder
   reminderChannel?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -474,6 +496,7 @@ export type SpenderProfileCreateWithoutUserInput = {
   id?: string
   monthlyGoalKobo?: number
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: $Enums.ReminderChannel
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -484,6 +507,7 @@ export type SpenderProfileUncheckedCreateWithoutUserInput = {
   id?: string
   monthlyGoalKobo?: number
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: $Enums.ReminderChannel
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -510,6 +534,7 @@ export type SpenderProfileUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -520,6 +545,7 @@ export type SpenderProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -530,6 +556,7 @@ export type SpenderProfileCreateWithoutGoalsInput = {
   id?: string
   monthlyGoalKobo?: number
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: $Enums.ReminderChannel
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -541,6 +568,7 @@ export type SpenderProfileUncheckedCreateWithoutGoalsInput = {
   userId: string
   monthlyGoalKobo?: number
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: $Enums.ReminderChannel
   createdAt?: Date | string
   updatedAt?: Date | string
@@ -566,6 +594,7 @@ export type SpenderProfileUpdateWithoutGoalsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -577,6 +606,7 @@ export type SpenderProfileUncheckedUpdateWithoutGoalsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   monthlyGoalKobo?: Prisma.IntFieldUpdateOperationsInput | number
   showSpendingHistory?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  remindersEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   reminderChannel?: Prisma.EnumReminderChannelFieldUpdateOperationsInput | $Enums.ReminderChannel
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -618,6 +648,7 @@ export type SpenderProfileSelect<ExtArgs extends runtime.Types.Extensions.Intern
   userId?: boolean
   monthlyGoalKobo?: boolean
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -631,6 +662,7 @@ export type SpenderProfileSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   userId?: boolean
   monthlyGoalKobo?: boolean
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -642,6 +674,7 @@ export type SpenderProfileSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   userId?: boolean
   monthlyGoalKobo?: boolean
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: boolean
   createdAt?: boolean
   updatedAt?: boolean
@@ -653,12 +686,13 @@ export type SpenderProfileSelectScalar = {
   userId?: boolean
   monthlyGoalKobo?: boolean
   showSpendingHistory?: boolean
+  remindersEnabled?: boolean
   reminderChannel?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type SpenderProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "monthlyGoalKobo" | "showSpendingHistory" | "reminderChannel" | "createdAt" | "updatedAt", ExtArgs["result"]["spenderProfile"]>
+export type SpenderProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "monthlyGoalKobo" | "showSpendingHistory" | "remindersEnabled" | "reminderChannel" | "createdAt" | "updatedAt", ExtArgs["result"]["spenderProfile"]>
 export type SpenderProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   goals?: boolean | Prisma.SpenderProfile$goalsArgs<ExtArgs>
@@ -682,6 +716,7 @@ export type $SpenderProfilePayload<ExtArgs extends runtime.Types.Extensions.Inte
     userId: string
     monthlyGoalKobo: number
     showSpendingHistory: boolean
+    remindersEnabled: boolean
     reminderChannel: $Enums.ReminderChannel
     createdAt: Date
     updatedAt: Date
@@ -1114,6 +1149,7 @@ export interface SpenderProfileFieldRefs {
   readonly userId: Prisma.FieldRef<"SpenderProfile", 'String'>
   readonly monthlyGoalKobo: Prisma.FieldRef<"SpenderProfile", 'Int'>
   readonly showSpendingHistory: Prisma.FieldRef<"SpenderProfile", 'Boolean'>
+  readonly remindersEnabled: Prisma.FieldRef<"SpenderProfile", 'Boolean'>
   readonly reminderChannel: Prisma.FieldRef<"SpenderProfile", 'ReminderChannel'>
   readonly createdAt: Prisma.FieldRef<"SpenderProfile", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"SpenderProfile", 'DateTime'>

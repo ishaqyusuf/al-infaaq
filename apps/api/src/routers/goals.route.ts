@@ -15,6 +15,7 @@ function nextMonthReminderDate() {
 const saveGoalInputSchema = z.object({
   monthlyGoalNaira: z.number().min(0),
   reminderChannel: z.enum(["EMAIL", "SMS", "WHATSAPP"]).default("EMAIL"),
+  remindersEnabled: z.boolean().default(true),
   showSpendingHistory: z.boolean().default(false),
 });
 
@@ -67,12 +68,14 @@ export const goalsRouter = createTRPCRouter({
         create: {
           monthlyGoalKobo,
           reminderChannel: input.reminderChannel,
+          remindersEnabled: input.remindersEnabled,
           showSpendingHistory: input.showSpendingHistory,
           userId: ctx.auth.session.user.id,
         },
         update: {
           monthlyGoalKobo,
           reminderChannel: input.reminderChannel,
+          remindersEnabled: input.remindersEnabled,
           showSpendingHistory: input.showSpendingHistory,
         },
         where: {
@@ -98,13 +101,17 @@ export const goalsRouter = createTRPCRouter({
               spenderProfileId: profile.id,
             },
           }),
-          prisma.reminder.create({
-            data: {
-              channel: input.reminderChannel,
-              scheduledAt: nextMonthReminderDate(),
-              userId: ctx.auth.session.user.id,
-            },
-          }),
+          ...(input.remindersEnabled
+            ? [
+                prisma.reminder.create({
+                  data: {
+                    channel: input.reminderChannel,
+                    scheduledAt: nextMonthReminderDate(),
+                    userId: ctx.auth.session.user.id,
+                  },
+                }),
+              ]
+            : []),
         ]);
       }
 

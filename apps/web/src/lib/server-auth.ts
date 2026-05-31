@@ -1,4 +1,5 @@
 import { isUserRole, USER_ROLE_LABELS, type UserRole } from "@al-infaaq/utils";
+import { resolveApiUrl } from "@al-infaaq/utils/runtime-url";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -24,8 +25,6 @@ export type WebAuthSession = {
   };
 };
 
-const apiOrigin = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3902";
-
 function normalizeRole(role: unknown): UserRole {
   if (typeof role === "string") {
     const normalized = role.toLowerCase();
@@ -43,7 +42,7 @@ export async function getServerAuthSession(): Promise<WebAuthSession | null> {
   let response: Response;
 
   try {
-    response = await fetch(`${apiOrigin}/api/auth/get-session`, {
+    response = await fetch(`${resolveApiUrl()}/api/auth/get-session`, {
       cache: "no-store",
       headers: {
         cookie: requestHeaders.get("cookie") ?? "",

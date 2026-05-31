@@ -61,6 +61,85 @@ This is the execution roadmap for taking Al-Infaaq from the current scaffold to
 - Default the web shell to dark mode, align auth forms with shared shadcn-style
   inputs/labels, and add an architecture guardrail for Trustee-reviewed
   metadata plus the `alinfaaq` domain direction.
+- Harden Paystack and Lemon Squeezy webhook route handlers with controlled
+  invalid-signature, malformed-JSON, and missing-secret responses, plus
+  route-level tests proving signed provider events reach persisted donation
+  transitions.
+- Add web architecture guardrails for protected route role boundaries so admin,
+  Trustee, foundation, spender, donation, wallet, goal, and onboarding pages
+  stay aligned with the API permission matrix.
+- Add role-aware onboarding workflow tests for spender goal state, incomplete
+  and approved foundation profiles, and Trustee/admin workspace routing.
+- Add zero-goal workflow coverage so turning off a monthly goal clears future
+  reminders without creating new goal-history or reminder rows.
+- Centralize runtime app/API origin resolution for Better Auth, tRPC, CORS, and
+  generated links through the shared URL helpers with regression tests for
+  public env, server env, Vercel preview, same-origin proxy, and localhost
+  fallbacks.
+- Add request lifecycle workflow coverage for approved draft publishing,
+  non-draft publish rejection, owner-scoped archive, archive audit logging, and
+  already-archived idempotency.
+- Add colocated zod form parsers and tests for donation checkout, giving goals,
+  and foundation Trustee review forms so invalid client input surfaces
+  field-level errors before tRPC mutations.
+- Add trust-operation workflow coverage for Trustee rejection, missing review
+  not-found handling, and admin foundation restoration audit logging.
+- Extract launch role provisioning into a tested auth service covering normalized
+  admin/Trustee target parsing, admin precedence, missing-user failure before
+  mutation, and `user.role_provisioned` audit logs.
+- Add request eligibility workflow coverage proving funded approved requests
+  remain public while checkout starts are blocked for funded, archived,
+  unavailable, rejected-foundation, and suspended-foundation requests.
+- Add admin dashboard workflow coverage for zero-filled donation status counts,
+  provider totals, successful totals, and pending/failed/refunded
+  reconciliation filters.
+- Add Playwright E2E coverage for public runtime rendering, unknown-route
+  redirects, Better Auth sign-up/sign-in, spender onboarding, foundation
+  Trustee-review onboarding, Trustee workspace access, admin workspace access,
+  spender goal saves, foundation profile submission for Trustee review, Trustee
+  approval, foundation request creation/publishing, public request rendering,
+  QR-backed banner generation/download links, anonymous Paystack checkout
+  completion, private wallet history, admin payout-readiness/trust-operations
+  rendering, privacy-safe request impact reports, and unapproved foundation
+  denial from admin operations.
+- Add payment-provider preflight coverage so missing checkout configuration
+  fails before a pending donation is created.
+- Add admin trust-operations reporting for payout readiness, stale pending
+  donations, and high-value successful donations using existing donation data.
+- Add privacy-safe request impact report pages backed by
+  `requests.impactReport`, with aggregate donation status totals and no spender
+  identity fields.
+- Add explicit spender reminder preferences with `remindersEnabled`, covering
+  goal save, queueing, due email delivery, and form validation.
+- Add Lemon Squeezy E2E checkout coverage through the local payment provider
+  harness and a signed webhook, alongside the existing Paystack callback flow.
+- Add responsive public-surface Playwright QA for mobile and desktop, including
+  dark-mode rendering, visible primary content, no page-level horizontal
+  overflow, and no collapsed visible text.
+- Add admin incident review for suspended foundations, failed/refunded
+  donations, stale pending payments, and high-value gifts using existing
+  operational data.
+- Add launch environment contract guardrails covering `.env.example`, README,
+  deployment docs, and launch readiness docs.
+- Add design-system guardrails preventing invalid Tailwind color shade classes
+  in app and shared UI surfaces.
+- Move app page shells to tokenized `bg-background` and `text-foreground`
+  classes, with architecture coverage blocking hardcoded page background hex.
+- Normalize shared cards and homepage card-like surfaces to `rounded-lg`, with
+  architecture coverage blocking oversized card corner radii.
+- Normalize command-style links to shared `buttonVariants`, with architecture
+  coverage blocking handcrafted button-like link classes.
+- Verify production build renders DB-backed pages dynamically, including
+  `/requests`, to avoid migration-order deployment prerender failures.
+- Keep the full launch baseline green locally: lint, typecheck, unit tests,
+  build, and Playwright E2E.
+
+## Remaining Launch Gates
+
+- Select and configure the final `alinfaaq` production TLD.
+- Provision production database, Better Auth secret/origin, payment provider
+  secrets, webhook registrations, and reminder delivery providers.
+- Run the deployment runbook against the exact production environment.
 
 ## Phase 1: Better Auth and Access Control
 
@@ -154,7 +233,8 @@ Acceptance:
 Acceptance:
 
 - Admins can inspect and act on platform operations without database access.
-- Foundations can view request performance without seeing donor identities.
+- Foundations can view request performance and impact without seeing donor
+  identities.
 
 ## Phase 8: QA, Security, and Launch Readiness
 

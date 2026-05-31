@@ -5,6 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./permissions": "./src/permissions.ts",
+    "./provision-roles": "./src/provision-roles.ts",
     "./server": "./src/server.ts",
     "./shared": "./src/shared.ts"
   },

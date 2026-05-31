@@ -5,7 +5,11 @@ type LemonSqueezyCheckoutInput = {
   donationReference: string;
 };
 
-const LEMON_SQUEEZY_BASE_URL = "https://api.lemonsqueezy.com/v1";
+function getLemonSqueezyBaseUrl() {
+  return (
+    process.env.LEMON_SQUEEZY_BASE_URL ?? "https://api.lemonsqueezy.com/v1"
+  );
+}
 
 function getLemonSqueezyApiKey() {
   const key = process.env.LEMONSQUEEZY_API_KEY;
@@ -27,10 +31,15 @@ function getLemonSqueezyStoreId() {
   return storeId;
 }
 
+export function assertLemonSqueezyConfigured() {
+  getLemonSqueezyApiKey();
+  getLemonSqueezyStoreId();
+}
+
 export async function createLemonSqueezyCheckout(
   input: LemonSqueezyCheckoutInput,
 ) {
-  const response = await fetch(`${LEMON_SQUEEZY_BASE_URL}/checkouts`, {
+  const response = await fetch(`${getLemonSqueezyBaseUrl()}/checkouts`, {
     method: "POST",
     headers: {
       Accept: "application/vnd.api+json",

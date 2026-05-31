@@ -11,7 +11,7 @@ export default function AppError({
   reset: () => void;
 }) {
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
+    <main className="min-h-screen bg-background px-5 py-8 text-foreground sm:px-8">
       <section className="mx-auto max-w-2xl">
         <Card className="p-5">
           <p className="text-sm font-medium text-red-700 dark:text-red-400">

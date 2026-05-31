@@ -146,6 +146,7 @@ export const SpenderProfileScalarFieldEnum = {
   userId: 'userId',
   monthlyGoalKobo: 'monthlyGoalKobo',
   showSpendingHistory: 'showSpendingHistory',
+  remindersEnabled: 'remindersEnabled',
   reminderChannel: 'reminderChannel',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

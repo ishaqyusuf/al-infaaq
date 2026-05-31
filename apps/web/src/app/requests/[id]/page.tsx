@@ -1,4 +1,5 @@
 import { Badge } from "@al-infaaq/ui/badge";
+import { buttonVariants } from "@al-infaaq/ui/button";
 import { Card } from "@al-infaaq/ui/card";
 import { formatNaira } from "@al-infaaq/utils";
 import { ArrowRight, ShieldCheck } from "lucide-react";
@@ -27,7 +28,7 @@ export default async function RequestPage({
       : 0;
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
+    <main className="min-h-screen bg-background px-5 py-8 text-foreground sm:px-8">
       <section className="mx-auto grid max-w-5xl gap-5 lg:grid-cols-[0.7fr_0.3fr]">
         <Card className="p-5">
           <div className="flex flex-wrap items-center gap-2">
@@ -76,7 +77,10 @@ export default async function RequestPage({
           </div>
           {request.status === "PUBLISHED" ? (
             <Link
-              className="mt-6 inline-flex h-11 w-full items-center justify-center gap-2 rounded-md bg-stone-950 px-4 text-sm font-semibold text-white"
+              className={buttonVariants({
+                className: "mt-6 w-full",
+                size: "lg",
+              })}
               href={`/donate?requestId=${request.id}`}
             >
               Donate anonymously

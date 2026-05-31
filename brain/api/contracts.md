@@ -45,6 +45,8 @@ Behavior:
 - Creates a pending Trustee review when one does not already exist.
 - Promotes the caller to the foundation role.
 - Writes a foundation submission audit log.
+- The web form must validate and trim profile metadata before calling the tRPC
+  mutation, including required name/description and full URL/email formats.
 
 ## Trustee Review Decision
 
@@ -59,6 +61,8 @@ Behavior:
 - Approval moves the foundation to `APPROVED`.
 - Rejection moves the foundation to `REJECTED`.
 - Decision notes, reviewer, decision time, and audit logs are stored.
+- Missing review records must fail before review, foundation, or audit rows are
+  changed.
 
 ## Admin Foundation Status
 
@@ -68,6 +72,7 @@ Behavior:
 - `admin.restoreFoundation` moves a foundation back to `APPROVED`.
 - Both privileged admin mutations write audit logs with the acting admin and
   target foundation.
+- Workflow tests must cover both suspension and restoration.
 
 ## Donation Request Lifecycle
 
@@ -83,6 +88,11 @@ Behavior:
 - Approved foundations can create draft requests.
 - Request owners and admins can publish drafts.
 - Request owners and admins can archive requests.
+- Publishing stores a publish timestamp, moves the request to `PUBLISHED`, and
+  writes an audit log.
+- Publishing a non-draft request is rejected.
+- Archiving is owner-scoped, writes an audit log on the first transition, and
+  is idempotent when the request is already archived.
 - Publishing is blocked for unapproved foundations.
 - Public request reads include published and funded requests; funded requests
   remain visible but should not show a donation CTA.
@@ -91,6 +101,9 @@ Behavior:
 - Donation checkout starts are allowed only for currently published requests;
   funded, archived, draft, rejected-foundation, and suspended-foundation requests
   are not donation targets.
+- Workflow tests must prove funded requests remain publicly readable while
+  checkout starts stay blocked for funded, archived, unavailable, rejected
+  foundation, and suspended foundation requests.
 
 ## Spender Goal Save
 
@@ -98,6 +111,7 @@ Input:
 
 - `monthlyGoalNaira`
 - `reminderChannel`
+- `remindersEnabled`
 - `showSpendingHistory`
 
 Behavior:
@@ -106,7 +120,13 @@ Behavior:
 - Stores goal history and replaces future unsent reminders when the goal is
   positive.
 - Clears future unsent reminders when the goal is set to zero.
+- Zero-goal saves must not create new goal-history or reminder rows.
+- Positive-goal saves keep goal history even when reminders are disabled, but
+  must not queue new reminder rows while `remindersEnabled` is false.
 - Writes a goal saved audit log.
+- The web form must validate the monthly goal, reminder channel, reminder
+  opt-in, and wallet visibility preference before calling the tRPC mutation,
+  while allowing zero-goal saves.
 
 ## Onboarding Next Step
 
@@ -121,14 +141,25 @@ Behavior:
 - Trustees and admins are treated as complete and receive their role workspaces.
 - The web dashboard must use this tRPC contract instead of importing Prisma or
   duplicating profile-completion rules.
+- Workflow tests must cover spender incomplete/complete states, incomplete
+  foundation statuses, approved foundation routing, and Trustee/admin workspace
+  routing.
+- Private web routes must declare page-level role boundaries that match the API
+  permission matrix; architecture tests enforce the expected role arrays for
+  admin, Trustee, foundation, spender wallet/goal/donation, and foundation
+  onboarding pages.
 
 ## Reminder Jobs
 
 Behavior:
 
 - Monthly reminder queueing is idempotent per user/channel/reminder date.
+- Monthly reminder queueing only includes spender profiles with a positive goal
+  and `remindersEnabled`.
 - Email reminder delivery is processed from due unsent `Reminder` rows and marks
   only successfully delivered rows as sent.
+- Due email delivery re-checks the spender profile before sending so reminders
+  disabled after queueing are skipped and left unsent.
 - Real email providers are injected into the job; the core job logic stays
   provider-neutral and testable.
 
@@ -150,6 +181,7 @@ Behavior:
 
 - Foundation request workspace reporting is sourced from
   `requests.foundationWorkspace`.
+- Dedicated request impact reporting is sourced from `requests.impactReport`.
 - Request performance includes aggregate progress, remaining amount, donation
   status counts, completed amount, and generated banner count.
 - Foundation reporting must not include spender records or spender identity
@@ -173,6 +205,9 @@ Behavior:
   checkout procedures and route handlers should not bypass donation persistence.
 - Workflow tests must prove pending donation persistence happens before the
   provider checkout URL is returned.
+- The web donation form must validate amount, provider, and request identity
+  before calling this tRPC mutation so invalid input never reaches checkout
+  initialization.
 
 ## Payment Webhook State Transitions
 
@@ -188,6 +223,12 @@ Behavior:
   requests to `PUBLISHED` when the raised total drops below target.
 - Failure events only move pending donations to `FAILED`.
 - Workflow tests must prove these status and aggregate-total transitions.
+- Paystack and Lemon Squeezy route handlers reject invalid signatures before
+  touching donation state.
+- Webhook route handlers return controlled errors for missing webhook secrets
+  and malformed signed JSON instead of throwing uncaught runtime errors.
+- Route-level tests must prove signed provider events call the persisted
+  donation transition path.
 
 ## Admin Dashboard Reporting
 
@@ -197,5 +238,11 @@ Behavior:
 - Admin reporting includes all-time successful donation totals, donation status
   counts, provider-level successful totals, and a reconciliation queue for
   pending, failed, and refunded donations.
+- Admin reporting includes an incident review queue derived from suspended
+  foundations, failed/refunded reconciliation items, stale pending payments, and
+  high-value successful gifts.
+- Workflow tests must prove zero-filled donation status counts, provider totals,
+  successful totals, the pending/failed/refunded reconciliation filter, and
+  incident review item construction.
 - Reconciliation views must not expose spender identity to foundations or public
   surfaces.

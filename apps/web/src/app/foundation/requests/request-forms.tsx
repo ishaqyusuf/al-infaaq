@@ -29,7 +29,8 @@ export function CreateRequestForm() {
     setError(null);
     setIsPending(true);
 
-    const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget;
+    const formData = new FormData(form);
 
     try {
       await trpcClient.requests.create.mutate({
@@ -37,7 +38,7 @@ export function CreateRequestForm() {
         targetNaira: readNumber(formData, "targetNaira"),
         title: readString(formData, "title"),
       });
-      event.currentTarget.reset();
+      form.reset();
       router.refresh();
     } catch (caughtError) {
       setError(

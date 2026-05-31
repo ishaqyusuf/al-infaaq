@@ -26,6 +26,9 @@ patterns.
 - Forms must follow Midday validation, error handling, and mutation patterns.
 - Validation should be colocated and readable, with errors surfaced near the
   relevant control or form summary using the Midday convention.
+- Client workflow forms should parse `FormData` through colocated zod schemas
+  before calling tRPC mutations. Invalid input must surface field-level errors
+  and must not reach payment, donation, foundation, goal, or request mutations.
 - Submit states must communicate pending, success, and failure states without
   requiring users to infer mutation progress.
 
@@ -41,3 +44,6 @@ patterns.
 - Use GND as the reference for the standard notification package system.
 - Use Plot Keys as the reference for local URL handling, portless/proxy support,
   and generated links.
+- Runtime app/API origin resolution must go through
+  `packages/utils/src/runtime-url.ts`. Do not hardcode localhost origins in app,
+  auth, tRPC, or generated-link code when a shared resolver can be used.

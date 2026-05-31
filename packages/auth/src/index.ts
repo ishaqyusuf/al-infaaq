@@ -2,6 +2,7 @@ import { isUserRole, type UserRole } from "@al-infaaq/utils";
 import { auth } from "./server";
 
 export { type Permission, roleHasPermission } from "./permissions";
+export { provisionRoles, readProvisionTargets } from "./provision-roles";
 export { auth } from "./server";
 export {
   authCookiePrefix,

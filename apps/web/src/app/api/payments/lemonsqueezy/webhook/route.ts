@@ -19,11 +19,32 @@ export async function POST(request: Request) {
   const rawBody = await request.text();
   const signature = request.headers.get("x-signature");
 
-  if (!verifyLemonSqueezyWebhookSignature({ payload: rawBody, signature })) {
+  let isVerified = false;
+
+  try {
+    isVerified = verifyLemonSqueezyWebhookSignature({
+      payload: rawBody,
+      signature,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Webhook secret is not configured." },
+      { status: 503 },
+    );
+  }
+
+  if (!isVerified) {
     return NextResponse.json({ error: "Invalid signature." }, { status: 401 });
   }
 
-  const payload = JSON.parse(rawBody) as LemonSqueezyWebhookPayload;
+  let payload: LemonSqueezyWebhookPayload;
+
+  try {
+    payload = JSON.parse(rawBody) as LemonSqueezyWebhookPayload;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
+  }
+
   const reference = payload.meta?.custom_data?.donation_reference;
 
   if (!reference) {

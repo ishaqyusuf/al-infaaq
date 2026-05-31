@@ -74,6 +74,12 @@ export function FoundationRequestActionMenu({
               Banner
             </Link>
             <Link
+              className={buttonVariants({ size: "sm", variant: "outline" })}
+              href={`/foundation/requests/${request.id}/report`}
+            >
+              Report
+            </Link>
+            <Link
               className={buttonVariants({ size: "sm" })}
               href={`/requests/${request.id}`}
             >

@@ -26,6 +26,7 @@
 - `requests.create`
 - `requests.foundationWorkspace`
 - `requests.generateBanner`
+- `requests.impactReport`
 - `requests.publish`
 - `requests.publicDetail`
 - `requests.publicList`

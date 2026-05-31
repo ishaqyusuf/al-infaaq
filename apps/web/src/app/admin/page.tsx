@@ -18,15 +18,20 @@ export default async function AdminPage() {
     donations,
     donationStatusCounts,
     foundations,
+    highValueDonations,
+    highValueReviewThresholdKobo,
+    incidentReviewItems,
+    payoutReadiness,
     providerTotals,
     reconciliationItems,
     requests,
+    stalePendingDonations,
     totalSucceededKobo,
     users,
   } = await trpc.admin.dashboard();
 
   return (
-    <main className="min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-8 text-stone-950 dark:text-stone-50 sm:px-8">
+    <main className="min-h-screen bg-background px-5 py-8 text-foreground sm:px-8">
       <section className="mx-auto grid max-w-7xl gap-5">
         <Card className="p-5">
           <p className="text-sm font-medium text-stone-500 dark:text-stone-500">
@@ -104,6 +109,108 @@ export default async function AdminPage() {
           </Card>
         </section>
 
+        <section className="grid gap-5 xl:grid-cols-3">
+          <Card className="p-5">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold">Payout readiness</h2>
+                <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">
+                  Approved foundations with successful gifts and no open payment
+                  exceptions.
+                </p>
+              </div>
+              <Badge className="bg-emerald-100 text-emerald-900">
+                {payoutReadiness.filter((item) => item.ready).length} ready
+              </Badge>
+            </div>
+            <div className="mt-4 grid gap-3">
+              {payoutReadiness.length > 0 ? (
+                payoutReadiness
+                  .slice(0, 5)
+                  .map((item) => (
+                    <PayoutReadinessItem
+                      failedCount={item.failedCount}
+                      key={item.foundation.id}
+                      name={item.foundation.name}
+                      pendingCount={item.pendingCount}
+                      ready={item.ready}
+                      succeededKobo={item.succeededKobo}
+                    />
+                  ))
+              ) : (
+                <p className="text-sm text-stone-600 dark:text-stone-400">
+                  No approved foundation has successful donations yet.
+                </p>
+              )}
+            </div>
+          </Card>
+
+          <Card className="p-5 xl:col-span-2">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-semibold">Trust operations</h2>
+                <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">
+                  Stale pending payments and high-value successful donations for
+                  operational review.
+                </p>
+              </div>
+              <Badge className="bg-amber-100 text-amber-900">
+                {stalePendingDonations.length + highValueDonations.length}{" "}
+                review
+              </Badge>
+            </div>
+            <div className="mt-4 grid gap-4">
+              <AdminDonationsDataTable
+                donations={stalePendingDonations}
+                title="Stale pending donations"
+              />
+              <div>
+                <p className="mb-2 text-xs font-medium uppercase tracking-normal text-stone-500 dark:text-stone-500">
+                  High value threshold:{" "}
+                  {formatNaira(highValueReviewThresholdKobo / 100)}
+                </p>
+                <AdminDonationsDataTable
+                  donations={highValueDonations}
+                  title="High-value successful gifts"
+                />
+              </div>
+            </div>
+          </Card>
+        </section>
+
+        <Card className="p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className="text-xl font-semibold">Incident review</h2>
+              <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">
+                Support queue for suspended foundations, failed/refunded
+                payments, stale pending payments, and high-value gifts.
+              </p>
+            </div>
+            <Badge className="bg-red-100 text-red-900">
+              {incidentReviewItems.length} open
+            </Badge>
+          </div>
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {incidentReviewItems.length > 0 ? (
+              incidentReviewItems.map((item) => (
+                <IncidentReviewItem
+                  key={item.id}
+                  label={item.label}
+                  reason={item.reason}
+                  severity={item.severity}
+                  target={item.target}
+                  type={item.type}
+                />
+              ))
+            ) : (
+              <p className="text-sm text-stone-600 dark:text-stone-400">
+                No incident review items are open.
+              </p>
+            )}
+          </div>
+        </Card>
+
         <section className="grid gap-5 xl:grid-cols-2">
           <AdminFoundationsDataTable foundations={foundations} />
           <AdminRequestsDataTable requests={requests} />
@@ -115,6 +222,83 @@ export default async function AdminPage() {
         </section>
       </section>
     </main>
+  );
+}
+
+function IncidentReviewItem({
+  label,
+  reason,
+  severity,
+  target,
+  type,
+}: {
+  label: string;
+  reason: string;
+  severity: "high" | "low" | "medium";
+  target: string;
+  type: "FOUNDATION" | "PAYMENT";
+}) {
+  const severityClass =
+    severity === "high"
+      ? "bg-red-100 text-red-900"
+      : severity === "medium"
+        ? "bg-amber-100 text-amber-900"
+        : "bg-stone-100 text-stone-900";
+
+  return (
+    <div className="rounded-lg border border-stone-200 dark:border-stone-800 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-semibold">{label}</p>
+          <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">
+            {reason}
+          </p>
+        </div>
+        <Badge className={severityClass}>{severity}</Badge>
+      </div>
+      <p className="mt-3 text-xs text-stone-500 dark:text-stone-500">
+        {type.toLowerCase()} - {target}
+      </p>
+    </div>
+  );
+}
+
+function PayoutReadinessItem({
+  failedCount,
+  name,
+  pendingCount,
+  ready,
+  succeededKobo,
+}: {
+  failedCount: number;
+  name: string;
+  pendingCount: number;
+  ready: boolean;
+  succeededKobo: number;
+}) {
+  return (
+    <div className="rounded-lg border border-stone-200 dark:border-stone-800 p-3">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="font-semibold">{name}</p>
+          <p className="mt-1 text-sm text-stone-600 dark:text-stone-400">
+            {formatNaira(succeededKobo / 100)} successful
+          </p>
+        </div>
+        <Badge
+          className={
+            ready
+              ? "bg-emerald-100 text-emerald-900"
+              : "bg-amber-100 text-amber-900"
+          }
+        >
+          {ready ? "ready" : "review"}
+        </Badge>
+      </div>
+      <p className="mt-3 text-xs text-stone-500 dark:text-stone-500">
+        {pendingCount} pending, {failedCount} failed
+      </p>
+    </div>
   );
 }
 

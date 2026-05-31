@@ -11,7 +11,7 @@ export default async function SignUpPage() {
   }
 
   return (
-    <main className="grid min-h-screen bg-[#f7f5ef] dark:bg-[#11100d] px-5 py-10 text-stone-950 dark:text-stone-50">
+    <main className="grid min-h-screen bg-background px-5 py-10 text-foreground">
       <section className="mx-auto grid w-full max-w-md content-center">
         <div className="mb-8">
           <Link className="text-sm font-semibold text-emerald-800" href="/">

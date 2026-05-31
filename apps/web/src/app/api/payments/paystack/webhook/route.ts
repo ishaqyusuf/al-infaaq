@@ -18,11 +18,32 @@ export async function POST(request: Request) {
   const rawBody = await request.text();
   const signature = request.headers.get("x-paystack-signature");
 
-  if (!verifyPaystackWebhookSignature({ payload: rawBody, signature })) {
+  let isVerified = false;
+
+  try {
+    isVerified = verifyPaystackWebhookSignature({
+      payload: rawBody,
+      signature,
+    });
+  } catch {
+    return NextResponse.json(
+      { error: "Webhook secret is not configured." },
+      { status: 503 },
+    );
+  }
+
+  if (!isVerified) {
     return NextResponse.json({ error: "Invalid signature." }, { status: 401 });
   }
 
-  const payload = JSON.parse(rawBody) as PaystackWebhookPayload;
+  let payload: PaystackWebhookPayload;
+
+  try {
+    payload = JSON.parse(rawBody) as PaystackWebhookPayload;
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON." }, { status: 400 });
+  }
+
   const reference = payload.data?.reference;
 
   if (!reference) {
