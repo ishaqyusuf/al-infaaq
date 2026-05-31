@@ -7,6 +7,9 @@ import { Textarea } from "@al-infaaq/ui/textarea";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { DevFormQuickFillButton } from "@/components/dev/dev-form-quick-fill-button";
+import { createQuickFillAdapter, QuickFill } from "@/components/dev/quick-fill";
 import { trpcClient } from "@/lib/trpc-client";
 
 function readString(formData: FormData, key: string) {
@@ -23,6 +26,14 @@ export function CreateRequestForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
+  const formContext = useForm({
+    defaultValues: {
+      story: "",
+      targetNaira: "",
+      title: "",
+    },
+  });
+  const quickFill = new QuickFill(createQuickFillAdapter(formContext));
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -39,6 +50,7 @@ export function CreateRequestForm() {
         title: readString(formData, "title"),
       });
       form.reset();
+      formContext.reset();
       router.refresh();
     } catch (caughtError) {
       setError(
@@ -55,17 +67,30 @@ export function CreateRequestForm() {
     <form onSubmit={handleSubmit}>
       <div className="grid gap-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 p-5">
         <h2 className="text-xl font-semibold">Create request</h2>
+        <div className="flex justify-end">
+          <DevFormQuickFillButton onFill={() => quickFill.fill("request")} />
+        </div>
         <Label>
           Title
-          <Input name="title" required />
+          <Input required {...formContext.register("title")} />
         </Label>
         <Label>
           Story
-          <Textarea className="min-h-28" name="story" required />
+          <Textarea
+            className="min-h-28"
+            required
+            {...formContext.register("story")}
+          />
         </Label>
         <Label>
           Target amount in NGN
-          <Input min="1" name="targetNaira" required step="1" type="number" />
+          <Input
+            min="1"
+            required
+            step="1"
+            type="number"
+            {...formContext.register("targetNaira")}
+          />
         </Label>
         {error ? <p className="text-sm text-red-700">{error}</p> : null}
         <div className="flex justify-end">

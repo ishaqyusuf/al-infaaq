@@ -6,6 +6,9 @@ import { Label } from "@al-infaaq/ui/label";
 import { Select } from "@al-infaaq/ui/select";
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { DevFormQuickFillButton } from "@/components/dev/dev-form-quick-fill-button";
+import { createQuickFillAdapter, QuickFill } from "@/components/dev/quick-fill";
 import { trpcClient } from "@/lib/trpc-client";
 import {
   type DonationFieldErrors,
@@ -16,6 +19,13 @@ export function DonationForm({ requestId }: { requestId: string }) {
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<DonationFieldErrors>({});
   const [isPending, setIsPending] = useState(false);
+  const form = useForm({
+    defaultValues: {
+      amountNaira: "",
+      provider: "paystack",
+    },
+  });
+  const quickFill = new QuickFill(createQuickFillAdapter(form));
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -51,15 +61,18 @@ export function DonationForm({ requestId }: { requestId: string }) {
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid gap-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 p-5">
+        <div className="flex justify-end">
+          <DevFormQuickFillButton onFill={() => quickFill.fill("donation")} />
+        </div>
         <Label>
           Amount in NGN
           <Input
             aria-invalid={Boolean(fieldErrors.amountNaira)}
             min="1"
-            name="amountNaira"
             required
             step="1"
             type="number"
+            {...form.register("amountNaira")}
           />
           {fieldErrors.amountNaira ? (
             <span className="text-xs font-normal text-red-700 dark:text-red-400">
@@ -69,7 +82,10 @@ export function DonationForm({ requestId }: { requestId: string }) {
         </Label>
         <Label>
           Payment provider
-          <Select aria-invalid={Boolean(fieldErrors.provider)} name="provider">
+          <Select
+            aria-invalid={Boolean(fieldErrors.provider)}
+            {...form.register("provider")}
+          >
             <option value="paystack">Paystack</option>
             <option value="lemon_squeezy">Lemon Squeezy</option>
           </Select>

@@ -29,6 +29,9 @@ patterns.
 - Client workflow forms should parse `FormData` through colocated zod schemas
   before calling tRPC mutations. Invalid input must surface field-level errors
   and must not reach payment, donation, foundation, goal, or request mutations.
+- Dev quick-fill and quick-login helpers must follow the Plot Keys form-context
+  pattern: wire through `react-hook-form` form adapters, `form.reset(...)`, or
+  `form.setValue(...)`. Never fill fields by querying or mutating DOM nodes.
 - Submit states must communicate pending, success, and failure states without
   requiring users to infer mutation progress.
 
@@ -43,7 +46,7 @@ patterns.
 
 - Use GND as the reference for the standard notification package system.
 - Use Plot Keys as the reference for local URL handling, portless/proxy support,
-  and generated links.
+  generated links, dev quick-fill, and quick-login helpers.
 - Runtime app/API origin resolution must go through
   `packages/utils/src/runtime-url.ts`. Do not hardcode localhost origins in app,
   auth, tRPC, or generated-link code when a shared resolver can be used.

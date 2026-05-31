@@ -14,6 +14,8 @@ architecture, product patterns, and infrastructure behavior.
 - `plot-keys`: `/Users/M1PRO/Documents/code/plot-keys`
   - Reference for local URL handling, portless/proxy support, and generated
     links.
+  - Reference for dev quick-fill and quick-login patterns that fill through form
+    context/adapters instead of DOM selectors.
 
 ## Additional References
 

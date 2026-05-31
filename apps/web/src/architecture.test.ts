@@ -291,6 +291,32 @@ describe("web architecture guardrails", () => {
     expect(offenders.map((path) => relative(appRoot, path))).toEqual([]);
   });
 
+  test("dev quick fill uses form adapters instead of DOM mutation", () => {
+    const quickFillSource = readSource(
+      join(import.meta.dir, "components", "dev", "quick-fill.ts"),
+    );
+    const quickFillForms = [
+      "donate/donation-form.tsx",
+      "foundation/requests/request-forms.tsx",
+      "foundations/apply/foundation-review-form.tsx",
+      "goals/giving-goal-form.tsx",
+      "sign-in/sign-in-form.tsx",
+      "sign-up/sign-up-form.tsx",
+    ];
+
+    expect(quickFillSource).toContain("createQuickFillAdapter");
+    expect(quickFillSource).toContain("form.reset");
+    expect(quickFillSource).toContain("form.setValue");
+    expect(quickFillSource).not.toContain("querySelector");
+    expect(quickFillSource).not.toContain("document.");
+
+    for (const route of quickFillForms) {
+      const source = readSource(join(appRoot, route));
+
+      expect(source).toContain("createQuickFillAdapter");
+    }
+  });
+
   test("launch environment contract stays templated and documented", () => {
     const sources = {
       ".env.example": readSource(join(repoRoot, ".env.example")),

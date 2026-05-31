@@ -20,3 +20,6 @@
 - Updated `.env.example`, README, deployment docs, and launch readiness notes
   for Better Auth URL, local PostgreSQL, payment provider, API origin, and
   `alinfaaq` domain-direction requirements.
+- Added Plot Keys-style dev quick-fill and quick-login helpers wired through
+  React Hook Form context/adapters, and made the first registered Better Auth
+  user resolve to the platform admin role.

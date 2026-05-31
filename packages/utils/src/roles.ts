@@ -8,7 +8,7 @@ export const USER_ROLES = [
 export type UserRole = (typeof USER_ROLES)[number];
 
 export const USER_ROLE_LABELS = {
-  admin: "Admin",
+  admin: "Super Admin",
   foundation: "Foundation",
   spender: "Al-Muhsin",
   trustee: "Trustee",

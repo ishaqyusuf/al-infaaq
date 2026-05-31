@@ -2,6 +2,7 @@ import { prisma } from "@al-infaaq/db";
 import { resolveApiUrl, resolveAppUrl } from "@al-infaaq/utils";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { resolveRegisteredUserRole } from "./first-user-admin";
 import { authCookiePrefix } from "./shared";
 
 function uniqueOrigins(origins: Array<string | undefined>) {
@@ -27,6 +28,20 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          return {
+            data: {
+              ...user,
+              role: await resolveRegisteredUserRole(prisma),
+            },
+          };
+        },
+      },
+    },
+  },
   emailAndPassword: {
     enabled: true,
     minPasswordLength: 8,

@@ -7,6 +7,9 @@ import { Textarea } from "@al-infaaq/ui/textarea";
 import { useRouter } from "next/navigation";
 import type { FormEvent } from "react";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { DevFormQuickFillButton } from "@/components/dev/dev-form-quick-fill-button";
+import { createQuickFillAdapter, QuickFill } from "@/components/dev/quick-fill";
 import { trpcClient } from "@/lib/trpc-client";
 import {
   type FoundationReviewFieldErrors,
@@ -33,6 +36,17 @@ export function FoundationReviewForm({
     {},
   );
   const [isPending, setIsPending] = useState(false);
+  const form = useForm({
+    defaultValues: {
+      contactEmail: defaultValues.contactEmail ?? "",
+      description: defaultValues.description ?? "",
+      documentUrl: defaultValues.documentUrl ?? "",
+      name: defaultValues.name ?? "",
+      registrationNumber: defaultValues.registrationNumber ?? "",
+      websiteUrl: defaultValues.websiteUrl ?? "",
+    },
+  });
+  const quickFill = new QuickFill(createQuickFillAdapter(form));
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -68,13 +82,17 @@ export function FoundationReviewForm({
   return (
     <form onSubmit={handleSubmit}>
       <div className="grid gap-5 rounded-lg border border-stone-200 dark:border-stone-800 bg-white dark:bg-stone-950 p-5">
+        <div className="flex justify-end">
+          <DevFormQuickFillButton
+            onFill={() => quickFill.fill("foundation-review")}
+          />
+        </div>
         <Label>
           Foundation name
           <Input
             aria-invalid={Boolean(fieldErrors.name)}
-            defaultValue={defaultValues.name ?? ""}
-            name="name"
             required
+            {...form.register("name")}
           />
           {fieldErrors.name ? (
             <span className="text-xs font-normal text-red-700 dark:text-red-400">
@@ -87,9 +105,8 @@ export function FoundationReviewForm({
           <Textarea
             aria-invalid={Boolean(fieldErrors.description)}
             className="min-h-32"
-            defaultValue={defaultValues.description ?? ""}
-            name="description"
             required
+            {...form.register("description")}
           />
           {fieldErrors.description ? (
             <span className="text-xs font-normal text-red-700 dark:text-red-400">
@@ -102,9 +119,8 @@ export function FoundationReviewForm({
             Contact email
             <Input
               aria-invalid={Boolean(fieldErrors.contactEmail)}
-              defaultValue={defaultValues.contactEmail ?? ""}
-              name="contactEmail"
               type="email"
+              {...form.register("contactEmail")}
             />
             {fieldErrors.contactEmail ? (
               <span className="text-xs font-normal text-red-700 dark:text-red-400">
@@ -116,17 +132,15 @@ export function FoundationReviewForm({
             Registration number
             <Input
               aria-invalid={Boolean(fieldErrors.registrationNumber)}
-              defaultValue={defaultValues.registrationNumber ?? ""}
-              name="registrationNumber"
+              {...form.register("registrationNumber")}
             />
           </Label>
           <Label>
             Website URL
             <Input
               aria-invalid={Boolean(fieldErrors.websiteUrl)}
-              defaultValue={defaultValues.websiteUrl ?? ""}
-              name="websiteUrl"
               type="url"
+              {...form.register("websiteUrl")}
             />
             {fieldErrors.websiteUrl ? (
               <span className="text-xs font-normal text-red-700 dark:text-red-400">
@@ -138,9 +152,8 @@ export function FoundationReviewForm({
             Document URL
             <Input
               aria-invalid={Boolean(fieldErrors.documentUrl)}
-              defaultValue={defaultValues.documentUrl ?? ""}
-              name="documentUrl"
               type="url"
+              {...form.register("documentUrl")}
             />
             {fieldErrors.documentUrl ? (
               <span className="text-xs font-normal text-red-700 dark:text-red-400">
